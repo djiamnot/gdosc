@@ -2,8 +2,9 @@
 #include "reference.h"
 #include <cstdlib>
 #include <iostream>
+extern"C" {
 #include <lo/lo.h>
-
+}
 #ifndef OSCSENDER_H
 #define OSCSENDER_H
 

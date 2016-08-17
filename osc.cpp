@@ -2,7 +2,7 @@
 
 
 OSCsender::OSCsender() {
-    std::cout << "OSCsender instantiated" << std::endl;
+    std::cout << "OSCsender instantiated!" << std::endl;
     destination = lo_address_new("localhost", "9000");
 }
 

@@ -1,14 +1,16 @@
 # SCsub
 Import('env')
 
-env.add_source_files(env.modules_sources,"*.cpp") # just add all cpp files to the build
-# inspired by https://github.com/antarktikali/godot-raknet-example/blob/master/gdraknet/SCsub
-#env.Append(CPPFLAGS=["-lstdc++"])
-#env.Append(CPPFLAGS=["-std=gnu++11"])
-env.Append(CPPFLAGS=["-I/usr/include/lo -llo"])
-#env.Append(CPPFLAGS=["-lpthread"])
+module_env = env.Clone()
 
-#env.Append(LINKFLAGS=["-lstdc++"])
-#env.Append(LINKFLAGS=["-std=gnu++11"])
-env.Append(LINKFLAGS=["-llo"])
-#env.Append(LINKFLAGS=["-lpthread"])
+module_env.add_source_files(env.modules_sources,"*.cpp") # just add all cpp files to the build
+# inspired by https://github.com/antarktikali/godot-raknet-example/blob/master/gdraknet/SCsub
+module_env.Append(CXXFLAGS=["-lstdc++"])
+module_env.Append(CXXFLAGS=["-std=gnu++11"])
+module_env.Append(CXXFLAGS=["-I/usr/include/lo", "-llo"])
+module_env.Append(CXXFLAGS=["-lpthread"])
+
+#module_env.Append(LINKFLAGS=["-lstdc++"])
+#module_env.Append(LINKFLAGS=["-std=gnu++11"])
+#module_env.Append(LINKFLAGS=["-llo"])
+#module_env.Append(LINKFLAGS=["-lpthread"])
