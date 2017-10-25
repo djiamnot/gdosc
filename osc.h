@@ -3,12 +3,12 @@
 #include <cstdlib>
 #include <iostream>
 
-/* #include <osc/OscOutboundPacketStream.h> */
-/* #include <ip/UdpSocket.h> */
+#include <osc/OscOutboundPacketStream.h>
+#include <ip/UdpSocket.h>
 
-/* #define ADDRESS "127.0.0.1" */
-/* #define PORT 9000 */
-/* #define OUTPUT_BUFFER_SIZE 1024 */
+#define ADDRESS "127.0.0.1"
+#define PORT 9000
+#define OUTPUT_BUFFER_SIZE 1024
 
 #ifndef OSCSENDER_H
 #define OSCSENDER_H
