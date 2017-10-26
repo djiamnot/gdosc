@@ -3,14 +3,27 @@ Import('env')
 
 module_env = env.Clone()
 
-module_env.add_source_files(env.modules_sources,"src/*.cpp") # just add all cpp files to the build
+module_env.add_source_files(env.modules_sources,"*.cpp") # just add all cpp files to the build
+module_env.add_source_files(env.modules_sources,"oscpack/osc/*.cpp") 
+module_env.add_source_files(env.modules_sources,"oscpack/osc/posix/*.cpp")
+module_env.add_source_files(env.modules_sources,"oscpack/ip/*.cpp")
+module_env.add_source_files(env.modules_sources,"oscpack/ip/posix/*.cpp")
 # inspired by https://github.com/antarktikali/godot-raknet-example/blob/master/gdraknet/SCsub
 module_env.Append(CPPFLAGS=["-lstdc++"])
 module_env.Append(CPPFLAGS=["-std=gnu++11"])
-module_env.Append(CPPFLAGS=["-I/usr/include/lo", "-llo"])
+# module_env.Append(CPPFLAGS=["-I/usr/include/lo", "-llo"])
 module_env.Append(CPPFLAGS=["-lpthread"])
+module_env.Append(LIBPATH="#oscpack")
+module_env.Append( CPPPATH=["oscpack",'oscpack/osc', "oscpack/ip"])
+module_env.Append(LIBPATH="#oscpack/ip")
+module_env.Append(LINKFLAGS=["oscpack/osc/OscOutboundPacketStream.o"])
+
+# linux
+module_env.Append(LIBPATH="#oscpack/ip/posix")
+module_env.Append(LIBPATH="#oscpack/osc/posix")
+module_env.Append(LIBS="UdpSocket.o")
 
 module_env.Append(LINKFLAGS=["-lstdc++"])
 module_env.Append(LINKFLAGS=["-std=gnu++11"])
-module_env.Append(LINKFLAGS=["-I/usr/include/lo", "-llo"])
+# module_env.Append(LINKFLAGS=["-I/usr/include/lo", "-llo"])
 module_env.Append(LINKFLAGS=["-lpthread"])

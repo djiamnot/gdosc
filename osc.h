@@ -3,15 +3,18 @@
 #include <cstdlib>
 #include <iostream>
 
+#include <osc/OscOutboundPacketStream.h>
+#include <ip/UdpSocket.h>
+
+#define ADDRESS "127.0.0.1"
+#define PORT 9000
+#define OUTPUT_BUFFER_SIZE 1024
+
 #ifndef OSCSENDER_H
 #define OSCSENDER_H
 
-#include "reference.h"
-
 class OSCsender : public Reference {
   GDCLASS(OSCsender, Reference);
-
-  std::string destHost, destPort;
 
  protected:
   static void _bind_methods();
