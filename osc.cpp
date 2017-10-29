@@ -1,10 +1,10 @@
 #include "osc.h"
 
-OSCsender::OSCsender() {
-    std::cout << "OSCsender instantiated!" << std::endl;
+OSCclient::OSCclient() {
+    std::cout << "OSCclient instantiated!" << std::endl;
 }
 
-void OSCsender::testSend() {
+void OSCclient::testSend() {
     std::cout << "sending message" << std::endl;
     UdpTransmitSocket transmitSocket( IpEndpointName( ADDRESS, PORT ) );
 
@@ -21,7 +21,7 @@ void OSCsender::testSend() {
     transmitSocket.Send( p.Data(), p.Size() );
 }
 
-void OSCsender::_bind_methods() {
-  ClassDB::bind_method(D_METHOD("testSend"), &OSCsender::testSend);
+void OSCclient::_bind_methods() {
+  ClassDB::bind_method(D_METHOD("testSend"), &OSCclient::testSend);
     // ObjectTypeDB::bind_method("set_port", &OSC::set_port);
 }

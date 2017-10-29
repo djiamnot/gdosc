@@ -13,14 +13,14 @@
 #ifndef OSCSENDER_H
 #define OSCSENDER_H
 
-class OSCsender : public Reference {
-  GDCLASS(OSCsender, Reference);
+class OSCclient : public Reference {
+  GDCLASS(OSCclient, Reference);
 
  protected:
   static void _bind_methods();
 
  public:
-  OSCsender();
+  OSCclient();
   void testSend();
 };
 
