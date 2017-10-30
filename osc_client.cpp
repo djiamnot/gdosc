@@ -1,4 +1,4 @@
-#include "osc.h"
+#include "osc_client.h"
 
 OSCclient::OSCclient() {
     std::cout << "OSCclient instantiated!" << std::endl;

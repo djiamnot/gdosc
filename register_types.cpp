@@ -2,7 +2,7 @@
 
 #include "register_types.h"
 // #include "object_type_db.h"
-#include "osc.h"
+#include "osc_client.h"
 
 void register_gdosc_types() {
 
