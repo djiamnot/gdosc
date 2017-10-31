@@ -20,6 +20,7 @@ class OSCclient : public Reference {
   static void _bind_methods();
 
  public:
+  UdpTransmitSocket transmitSocket( const IpEndpointName& remoteEndpoint);
   OSCclient();
   void testSend();
 };
