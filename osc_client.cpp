@@ -1,7 +1,11 @@
 #include "osc_client.h"
 
 OSCclient::OSCclient() {
-  transmitSocket( IpEndpointName( ADDRESS, PORT ) );
+  // create socket
+  IpEndpointName name = IpEndpointName(ADDRESS, PORT);
+  UdpTransmitSocket *socket = nullptr;
+  socket = new UdpTransmitSocket( name );
+  sendSocket.reset(socket);
   std::cout << "OSCclient instantiated!" << std::endl;
 }
 
@@ -18,7 +22,7 @@ void OSCclient::testSend() {
       << true << 24 << (float)10.8 << "world" << osc::EndMessage
       << osc::EndBundle;
 
-    transmitSocket.Send( p.Data(), p.Size() );
+    sendSocket->Send( p.Data(), p.Size() );
 }
 
 void OSCclient::_bind_methods() {

@@ -2,6 +2,7 @@
 #include "reference.h"
 #include <cstdlib>
 #include <iostream>
+#include <memory>
 
 #include <osc/OscOutboundPacketStream.h>
 #include <ip/UdpSocket.h>
@@ -10,8 +11,8 @@
 #define PORT 9000
 #define OUTPUT_BUFFER_SIZE 1024
 
-#ifndef OSCSENDER_H
-#define OSCSENDER_H
+#ifndef GDOSC_H
+#define GDOSC_H
 
 class OSCclient : public Reference {
   GDCLASS(OSCclient, Reference);
@@ -20,9 +21,12 @@ class OSCclient : public Reference {
   static void _bind_methods();
 
  public:
-  UdpTransmitSocket transmitSocket( const IpEndpointName& remoteEndpoint);
+  // UdpTransmitSocket transmitSocket( const osc::IpEndpointName& remoteEndpoint);
   OSCclient();
   void testSend();
+
+ private:
+  std::unique_ptr<UdpTransmitSocket> sendSocket; //< sender socket
 };
 
 #endif
