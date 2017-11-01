@@ -1,5 +1,7 @@
 /* osc.h */
-#include "reference.h"
+#include "scene/3d/spatial.h"
+#include "scene/main/node.h"
+#include "node_path.h"
 #include <cstdlib>
 #include <iostream>
 #include <memory>
@@ -14,8 +16,8 @@
 #ifndef GDOSC_H
 #define GDOSC_H
 
-class OSCclient : public Reference {
-  GDCLASS(OSCclient, Reference);
+class OSCclient : public Node {
+  GDCLASS(OSCclient, Node);
 
  protected:
   static void _bind_methods();

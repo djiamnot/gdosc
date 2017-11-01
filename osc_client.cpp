@@ -7,10 +7,12 @@ OSCclient::OSCclient() {
   socket = new UdpTransmitSocket( name );
   sendSocket.reset(socket);
   std::cout << "OSCclient instantiated!" << std::endl;
+  testSend();
 }
 
 void OSCclient::testSend() {
     std::cout << "sending message" << std::endl;
+    std::cout << get_parent() << std::endl;
 
     char buffer[OUTPUT_BUFFER_SIZE];
     osc::OutboundPacketStream p( buffer, OUTPUT_BUFFER_SIZE );
