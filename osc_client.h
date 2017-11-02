@@ -1,7 +1,9 @@
 /* osc.h */
 #include "scene/3d/spatial.h"
+#include "scene/3d/position_3d.h"
 #include "scene/main/node.h"
 #include "node_path.h"
+#include "print_string.h"
 #include <cstdlib>
 #include <iostream>
 #include <memory>
@@ -16,8 +18,8 @@
 #ifndef GDOSC_H
 #define GDOSC_H
 
-class OSCclient : public Node {
-  GDCLASS(OSCclient, Node);
+class OSCclient : public Spatial {
+  GDCLASS(OSCclient, Spatial);
 
  protected:
   static void _bind_methods();
@@ -26,6 +28,10 @@ class OSCclient : public Node {
   // UdpTransmitSocket transmitSocket( const osc::IpEndpointName& remoteEndpoint);
   OSCclient();
   void testSend();
+  void _notification(int what);
+
+  Spatial *parent;
+
 
  private:
   std::unique_ptr<UdpTransmitSocket> sendSocket; //< sender socket

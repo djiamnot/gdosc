@@ -10,6 +10,8 @@ OSCclient::OSCclient() {
   testSend();
 }
 
+
+
 void OSCclient::testSend() {
     std::cout << "sending message" << std::endl;
     std::cout << get_parent() << std::endl;
@@ -27,7 +29,30 @@ void OSCclient::testSend() {
     sendSocket->Send( p.Data(), p.Size() );
 }
 
-void OSCclient::_bind_methods() {
+void OSCclient::_notification(int what) {
+  if (!is_inside_tree()) return;
+
+  switch (what){
+  case NOTIFICATION_READY: {
+    parent = get_parent_spatial();
+
+    if (parent) {
+      set_process(true);
+    }
+  } break;
+
+  case NOTIFICATION_PROCESS: {
+    print_line(parent->get_translation());
+    //    print_line(parent->get_name ;
+    // spatial = parent->get_path();
+    // print_line(spatial->get_translation());
+
+  }
+
+  }
+}
+
+  void OSCclient::_bind_methods() {
   ClassDB::bind_method(D_METHOD("testSend"), &OSCclient::testSend);
     // ObjectTypeDB::bind_method("set_port", &OSC::set_port);
-}
+  }
