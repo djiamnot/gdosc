@@ -32,8 +32,15 @@ class OSCclient : public Spatial {
 
   Spatial *parent;
 
+  void set_id(String id);
+  String get_id() const ;
 
  private:
+
+  struct SatieData {
+    String id;
+  } satieData;
+
   std::unique_ptr<UdpTransmitSocket> sendSocket; //< sender socket
 };
 

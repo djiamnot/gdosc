@@ -35,9 +35,11 @@ void OSCclient::_notification(int what) {
   switch (what){
   case NOTIFICATION_READY: {
     parent = get_parent_spatial();
+    print_line(parent->get_name());
 
     if (parent) {
       set_process(true);
+      OSCclient::set_id(get_name());
     }
   } break;
 
@@ -52,7 +54,24 @@ void OSCclient::_notification(int what) {
   }
 }
 
-  void OSCclient::_bind_methods() {
+void OSCclient::set_id(String id) {
+  // std::cout << "Setting id: " << _id << std::endl;
+  satieData.id = id;
+  print_line("set : "+satieData.id);
+}
+
+String OSCclient:: get_id ()  const{
+  //String id = get_name();
+  print_line("get : "+satieData.id);
+  return satieData.id;
+}
+
+void OSCclient::_bind_methods() {
   ClassDB::bind_method(D_METHOD("testSend"), &OSCclient::testSend);
+  ClassDB::bind_method(D_METHOD("set_id"), &OSCclient::set_id);
+  ClassDB::bind_method(D_METHOD("get_id"), &OSCclient::get_id);
     // ObjectTypeDB::bind_method("set_port", &OSC::set_port);
-  }
+  ADD_PROPERTY(PropertyInfo(Variant::STRING, "id"), "set_id", "get_id");
+  // ADD_PROPERTY(PropertyInfo(Variant::INT, "type", PROPERTY_HINT_ENUM, "None,Sin"), "set_type", "get_type");
+
+}
