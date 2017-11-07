@@ -66,12 +66,56 @@ String OSCclient:: get_id ()  const{
   return satieData.id;
 }
 
+void OSCclient::set_send_update(bool b) {
+  satieData.send_update = b;
+}
+
+bool OSCclient::get_send_update() const{
+  return satieData.send_update;
+}
+
+void OSCclient::set_satie_category(String category) {
+  satieData.satie_category = category;
+}
+
+String OSCclient::get_satie_category() const {
+  return satieData.satie_category;
+}
+
+void OSCclient::set_satie_type(String type) {
+  satieData.satie_type = type;
+}
+
+String OSCclient::get_satie_type() const {
+  return satieData.satie_type;
+}
+
+void OSCclient::set_satie_group(String group) {
+  satieData.satie_group = group;
+}
+
+String OSCclient::get_satie_group() const {
+  return satieData.satie_group;
+}
+
+
+
 void OSCclient::_bind_methods() {
   ClassDB::bind_method(D_METHOD("testSend"), &OSCclient::testSend);
   ClassDB::bind_method(D_METHOD("set_id"), &OSCclient::set_id);
   ClassDB::bind_method(D_METHOD("get_id"), &OSCclient::get_id);
+  ClassDB::bind_method(D_METHOD("set_send_update"), &OSCclient::set_send_update);
+  ClassDB::bind_method(D_METHOD("get_send_update"), &OSCclient::get_send_update);
+  ClassDB::bind_method(D_METHOD("set_satie_category"), &OSCclient::set_satie_category);
+  ClassDB::bind_method(D_METHOD("get_satie_category"), &OSCclient::get_satie_category);
+  ClassDB::bind_method(D_METHOD("set_satie_type"), &OSCclient::set_satie_type);
+  ClassDB::bind_method(D_METHOD("get_satie_type"), &OSCclient::get_satie_type);
+  ClassDB::bind_method(D_METHOD("set_satie_group"), &OSCclient::set_satie_group);
+  ClassDB::bind_method(D_METHOD("get_satie_group"), &OSCclient::get_satie_group);
+
     // ObjectTypeDB::bind_method("set_port", &OSC::set_port);
   ADD_PROPERTY(PropertyInfo(Variant::STRING, "id"), "set_id", "get_id");
-  // ADD_PROPERTY(PropertyInfo(Variant::INT, "type", PROPERTY_HINT_ENUM, "None,Sin"), "set_type", "get_type");
+  ADD_PROPERTY(PropertyInfo(Variant::BOOL, "send_update", PROPERTY_HINT_NONE, "Update satie continuously"), "set_send_update", "get_send_update");
+    // ADD_PROPERTY(PropertyInfo(Variant::INT, "type", PROPERTY_HINT_ENUM, "None,Sin"), "set_type", "get_type");
 
 }
