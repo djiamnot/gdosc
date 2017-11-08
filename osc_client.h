@@ -28,10 +28,10 @@ class OSCclient : public Spatial {
   // UdpTransmitSocket transmitSocket( const osc::IpEndpointName& remoteEndpoint);
   OSCclient();
   void testSend();
-  void _notification(int what);
 
   Spatial *parent;
 
+  // properties
   void set_id(String id);
   String get_id() const ;
 
@@ -47,7 +47,8 @@ class OSCclient : public Spatial {
 
 
  private:
-
+  void _notification(int what);
+  void _change_notify();
   struct SatieData {
     String id;
     bool send_update;

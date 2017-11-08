@@ -29,6 +29,10 @@ void OSCclient::testSend() {
     sendSocket->Send( p.Data(), p.Size() );
 }
 
+void _change_notify() {
+  std::cout << "_change_notify called" << std::endl;
+}
+
 void OSCclient::_notification(int what) {
   if (!is_inside_tree()) return;
 
@@ -44,11 +48,9 @@ void OSCclient::_notification(int what) {
   } break;
 
   case NOTIFICATION_PROCESS: {
-    print_line(parent->get_translation());
-    //    print_line(parent->get_name ;
-    // spatial = parent->get_path();
-    // print_line(spatial->get_translation());
-
+    if(satieData.send_update){
+      print_line(parent->get_translation());
+    }
   }
 
   }
@@ -116,6 +118,8 @@ void OSCclient::_bind_methods() {
     // ObjectTypeDB::bind_method("set_port", &OSC::set_port);
   ADD_PROPERTY(PropertyInfo(Variant::STRING, "id"), "set_id", "get_id");
   ADD_PROPERTY(PropertyInfo(Variant::BOOL, "send_update", PROPERTY_HINT_NONE, "Update satie continuously"), "set_send_update", "get_send_update");
+  ADD_PROPERTY(PropertyInfo(Variant::STRING, "Category", PROPERTY_HINT_ENUM, "Audiosource, Effect"), "set_satie_category", "get_satie_category");
+  ADD_PROPERTY(PropertyInfo(Variant::STRING, "Type", PROPERTY_HINT_ENUM, "None"), "set_satie_type", "get_satie_type");
     // ADD_PROPERTY(PropertyInfo(Variant::INT, "type", PROPERTY_HINT_ENUM, "None,Sin"), "set_type", "get_type");
 
 }
