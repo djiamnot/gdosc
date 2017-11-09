@@ -1,4 +1,4 @@
-/* osc.h */
+/* osc_client.h */
 #include "scene/3d/spatial.h"
 #include "scene/3d/position_3d.h"
 #include "scene/main/node.h"

@@ -89,6 +89,7 @@ void OSCclient::set_satie_type(String type) {
 }
 
 String OSCclient::get_satie_type() const {
+  // std::cout << satieData.satie_type << std::endl;
   return satieData.satie_type;
 }
 
@@ -116,6 +117,7 @@ void OSCclient::_bind_methods() {
   ClassDB::bind_method(D_METHOD("get_satie_group"), &OSCclient::get_satie_group);
 
     // ObjectTypeDB::bind_method("set_port", &OSC::set_port);
+  ADD_GROUP("SATIE", "");
   ADD_PROPERTY(PropertyInfo(Variant::STRING, "id"), "set_id", "get_id");
   ADD_PROPERTY(PropertyInfo(Variant::BOOL, "send_update", PROPERTY_HINT_NONE, "Update satie continuously"), "set_send_update", "get_send_update");
   ADD_PROPERTY(PropertyInfo(Variant::STRING, "Category", PROPERTY_HINT_ENUM, "Audiosource, Effect"), "set_satie_category", "get_satie_category");
