@@ -67,7 +67,7 @@ float gdOscMessage::getArgAsFloat(int index, bool typeConvert) const{
         return ((gdOscArgFloat*)args[index])->get();
 }
 
-std::string gdOscMessage::getArgAsString( int index, bool typeConvert ) const{
+std::string gdOscMessage::getArgAsString( int index, bool typeConvert) const{
     if (getArgType(index) != TYPE_STRING ){
 	    if (typeConvert && (getArgType(index) == TYPE_FLOAT) ){
             char buf[1024];
@@ -86,11 +86,23 @@ std::string gdOscMessage::getArgAsString( int index, bool typeConvert ) const{
         return ((gdOscArgString*)args[index])->get();
 }
 
+int gdOscMessage::getNumArgs(){
+  return args.size();
+}
+
 gdOscArgType gdOscMessage::getArgType(int index) const{
 	if (index >= (int)args.size()){
 		throw OscExcOutOfBounds();
 	}else {
 		return args[index]->getType();
+	}
+}
+
+std::string gdOscMessage::getArgTypeName(int index) const {
+  if (index >= (int)args.size()){
+		throw OscExcOutOfBounds();
+	}else {
+		return args[index]->getTypeName();
 	}
 }
 

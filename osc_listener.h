@@ -26,6 +26,7 @@ class OSCListener : public Node {
 
  public:
   OSCListener();
+  std::string getOscMsgAsString(gdOscMessage message);
 
  protected:
   static void _bind_methods();

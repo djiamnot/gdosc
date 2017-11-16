@@ -46,34 +46,33 @@ bool OSCReceiver::start(){
 }
 
 void OSCReceiver::ProcessMessage(const osc::ReceivedMessage &m, const IpEndpointName &remoteEndpoint){
-  std::cout << "Process message called" << std::endl;
   // for (::osc::ReceivedMessage::const_iterator arg = m.ArgumentsBegin(); arg != m.ArgumentsEnd(); ++arg){
   //   std::cout << arg << std::endl;
   // }
 
   gdOscMessage* msg = new gdOscMessage();
 
+  msg->setAddress(m.AddressPattern());
+
   char endpointHost[IpEndpointName::ADDRESS_STRING_LENGTH];
   remoteEndpoint.AddressAsString(endpointHost);
 
   msg->setRemoteEndpoint(endpointHost, remoteEndpoint.port);
 
+
   try{
     for (::osc::ReceivedMessage::const_iterator arg = m.ArgumentsBegin(); arg != m.ArgumentsEnd(); ++arg){
       if(arg->IsInt32()) {
         msg->addIntArg(arg->AsInt32Unchecked());
-        std::cout << "Got int: " << arg->AsInt32Unchecked() << std::endl;
       }
       else if (arg->IsFloat()){
         msg->addFloatArg(arg->AsFloatUnchecked());
-        std::cout << "got a float: " << arg->AsFloatUnchecked() << std::endl;
       }
       else if (arg->IsString()) {
         msg->addStringArg(arg->AsStringUnchecked());
-        std::cout << "got a string: " << arg->AsStringUnchecked() << std::endl;
       }
-      messages.push_back(msg);
     }
+    messages.push_back(msg);
   }catch( osc::Exception& e ){
     // any parsing errors such as unexpected argument types, or
     // missing arguments get thrown as exceptions.
@@ -89,13 +88,12 @@ bool OSCReceiver::hasWaitingMessages(){
 }
 
 bool OSCReceiver::getNextMessage(gdOscMessage* message){
-  if (messages.size()) {
+  if (messages.size() == 0) {
     return false;
   }
 
   gdOscMessage* src_message = messages.front();
 	message->copy(*src_message);
-
 	delete src_message;
 
 	messages.pop_front();
