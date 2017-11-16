@@ -47,13 +47,16 @@ bool OSCReceiver::start(){
 
 void OSCReceiver::ProcessMessage(const osc::ReceivedMessage &m, const IpEndpointName &remoteEndpoint){
   std::cout << "Process message called" << std::endl;
-  // char endpointHost[IpEndpointName::ADDRESS_STRING_LENGTH];
-  // std::cout << "address: " << (void) remoteEndpoint.AddressAsString(endpointHost); << std::endl;
   // for (::osc::ReceivedMessage::const_iterator arg = m.ArgumentsBegin(); arg != m.ArgumentsEnd(); ++arg){
   //   std::cout << arg << std::endl;
   // }
 
   gdOscMessage* msg = new gdOscMessage();
+
+  char endpointHost[IpEndpointName::ADDRESS_STRING_LENGTH];
+  remoteEndpoint.AddressAsString(endpointHost);
+
+  msg->setRemoteEndpoint(endpointHost, remoteEndpoint.port);
 
   try{
     for (::osc::ReceivedMessage::const_iterator arg = m.ArgumentsBegin(); arg != m.ArgumentsEnd(); ++arg){
@@ -77,6 +80,27 @@ void OSCReceiver::ProcessMessage(const osc::ReceivedMessage &m, const IpEndpoint
     std::cout << "error while parsing message: "
               << m.AddressPattern() << ": " << e.what() << "\n";
   }
+}
+
+bool OSCReceiver::hasWaitingMessages(){
+  int queue_length = (int)messages.size();
+
+  return queue_length > 0;
+}
+
+bool OSCReceiver::getNextMessage(gdOscMessage* message){
+  if (messages.size()) {
+    return false;
+  }
+
+  gdOscMessage* src_message = messages.front();
+	message->copy(*src_message);
+
+	delete src_message;
+
+	messages.pop_front();
+
+  return true;
 }
 
 // void OSCReceiver::stop() {

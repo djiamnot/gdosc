@@ -46,6 +46,77 @@ void gdOscMessage::addFloatArg(float arg) {
 void gdOscMessage::addStringArg(std::string arg) {
   args.push_back( new gdOscArgString(arg));
 }
+
+int32_t gdOscMessage::getArgAsInt32(int index, bool typeConvert) const{
+	if (getArgType(index) != TYPE_INT32){
+		if( typeConvert && (getArgType(index) == TYPE_FLOAT) )
+			return (int32_t)((gdOscArgFloat*)args[index])->get();
+		else
+			throw OscExcInvalidArgumentType();
+	}else
+		return ((gdOscArgInt32*)args[index])->get();
+}
+
+float gdOscMessage::getArgAsFloat(int index, bool typeConvert) const{
+	if (getArgType(index) != TYPE_FLOAT){
+		if( typeConvert && (getArgType(index) == TYPE_INT32) )
+			return (float)((gdOscArgInt32*)args[index])->get();
+		else
+			throw OscExcInvalidArgumentType();
+	}else
+        return ((gdOscArgFloat*)args[index])->get();
+}
+
+std::string gdOscMessage::getArgAsString( int index, bool typeConvert ) const{
+    if (getArgType(index) != TYPE_STRING ){
+	    if (typeConvert && (getArgType(index) == TYPE_FLOAT) ){
+            char buf[1024];
+            sprintf(buf,"%f",((gdOscArgFloat*)args[index])->get() );
+            return std::string( buf );
+        }
+	    else if (typeConvert && (getArgType(index) == TYPE_INT32)){
+            char buf[1024];
+            sprintf(buf,"%i",((gdOscArgInt32*)args[index])->get() );
+            return std::string( buf );
+        }
+        else
+            throw OscExcInvalidArgumentType();
+	}
+	else
+        return ((gdOscArgString*)args[index])->get();
+}
+
+gdOscArgType gdOscMessage::getArgType(int index) const{
+	if (index >= (int)args.size()){
+		throw OscExcOutOfBounds();
+	}else {
+		return args[index]->getType();
+	}
+}
+
+gdOscMessage& gdOscMessage::copy( const gdOscMessage& other ){
+
+	address = other.address;
+
+	remoteHost = other.remoteHost;
+	remotePort = other.remotePort;
+
+	for ( int i=0; i<(int)other.args.size(); ++i ){
+		gdOscArgType argType = other.getArgType( i );
+		if ( argType == TYPE_INT32 )
+			args.push_back( new gdOscArgInt32( other.getArgAsInt32( i ) ) );
+		else if ( argType == TYPE_FLOAT )
+			args.push_back( new gdOscArgFloat( other.getArgAsFloat( i ) ) );
+		else if ( argType == TYPE_STRING )
+			args.push_back( new gdOscArgString( other.getArgAsString( i ) ) );
+		else
+      {
+        throw OscExcInvalidArgumentType();
+      }
+	}
+
+	return *this;
+}
 void gdOscMessage::clear(){
 	address = "";
 	remoteHost = "";

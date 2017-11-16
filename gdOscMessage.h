@@ -25,6 +25,14 @@ class gdOscMessage{
   void addFloatArg(float arg);
   void addStringArg(std::string arg);
 
+  int32_t getArgAsInt32(int index, bool typeConvert = false) const;
+  float getArgAsFloat(int index, bool typeConvert = false) const;
+  std::string getArgAsString(int index, bool typeConvert = false) const;
+
+  gdOscArgType getArgType(int index) const;
+
+  gdOscMessage& copy(const gdOscMessage& other);
+
 
  private:
 
@@ -35,4 +43,11 @@ class gdOscMessage{
   int remotePort; //< port the message was sent from
 
   std::vector<gdOscArg*> args;
+};
+
+class OscExc {
+};
+class OscExcInvalidArgumentType : public OscExc {
+};
+class OscExcOutOfBounds : public OscExc {
 };

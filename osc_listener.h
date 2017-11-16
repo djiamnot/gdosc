@@ -6,6 +6,7 @@
 #include <thread>
 
 #include "scene/main/node.h"
+#include "print_string.h"
 
 #include "osc/OscReceivedElements.h"
 #include "osc/OscPrintReceivedElements.h"
@@ -30,6 +31,7 @@ class OSCListener : public Node {
   static void _bind_methods();
 
  private:
+  void _notification(int what);
   OSCReceiver* osc_rcv;
 };
 #endif

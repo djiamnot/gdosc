@@ -25,6 +25,8 @@ class OSCReceiver : public ::osc::OscPacketListener {
 
  public:
   OSCReceiver();
+  bool hasWaitingMessages();
+  bool getNextMessage(gdOscMessage*);
 
  protected:
 
