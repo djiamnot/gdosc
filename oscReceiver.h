@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cstring>
 #include <cstdlib>
+#include <deque>
 #include <thread>
 
 
@@ -10,6 +11,8 @@
 
 #include "ip/UdpSocket.h"
 #include "ip/PacketListener.h"
+
+#include "gdOscMessage.h"
 
 struct oscReceiverSettings {
 	int port = 18000;        //< port to listen on
@@ -34,4 +37,6 @@ class OSCReceiver : public ::osc::OscPacketListener {
   std::thread listenThread;
   UdpListeningReceiveSocket* listenSocket;
   oscReceiverSettings settings;
+
+  std::deque<gdOscMessage*> messages;
 };
