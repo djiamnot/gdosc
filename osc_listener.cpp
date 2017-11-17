@@ -17,13 +17,16 @@ void OSCListener::_notification(int what) {
       if(osc_rcv->hasWaitingMessages()){
         gdOscMessage message;
         osc_rcv->getNextMessage(&message);
-        std::cout << "listener -- " << getOscMsgAsString(message) << std::endl;
+        String msg = getOscMsgAsString(message);
+        print_line(msg);
+        cur_msg = message;
+        emit_signal("osc_message", msg);
       }
     }
   }
 }
 
-std::string OSCListener::getOscMsgAsString(gdOscMessage m) {
+String OSCListener::getOscMsgAsString(gdOscMessage m) {
   std::string msg_string;
   msg_string = m.getAddress();
   msg_string += ":";
@@ -43,9 +46,16 @@ std::string OSCListener::getOscMsgAsString(gdOscMessage m) {
       msg_string += "unknown";
     }
   }
-  return msg_string;
+  return String(msg_string.c_str());
 }
+
+// gdOscMessage OSCListener::_osc_message(){
+//   print_line("signal callback called");
+//   return cur_msg;
+// }
 
 void OSCListener::_bind_methods() {
   std::cout << "will be binding here" << std::endl;
+  ADD_SIGNAL(MethodInfo("osc_message"));
+
 }
