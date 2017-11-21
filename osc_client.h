@@ -51,6 +51,7 @@ class OSCclient : public Spatial {
   void _change_notify();
   struct SatieData {
     String id;
+
     bool send_update;
     String satie_category;
     String satie_type;

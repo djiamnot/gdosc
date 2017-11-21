@@ -10,8 +10,6 @@ OSCclient::OSCclient() {
   testSend();
 }
 
-
-
 void OSCclient::testSend() {
     std::cout << "sending message" << std::endl;
     std::cout << get_parent() << std::endl;
@@ -55,6 +53,7 @@ void OSCclient::_notification(int what) {
 
   }
 }
+
 
 void OSCclient::set_id(String id) {
   // std::cout << "Setting id: " << _id << std::endl;
