@@ -14,6 +14,9 @@
 
 #include "gdOscMessage.h"
 
+#ifndef _OSCRECEIVER_
+#define _OSCRECEIVER_
+
 struct oscReceiverSettings {
 	int port = 18000;        //< port to listen on
 	bool reuse = true;   //< should the port be reused by other receivers?
@@ -42,3 +45,5 @@ class OSCReceiver : public ::osc::OscPacketListener {
 
   std::deque<gdOscMessage*> messages;
 };
+
+#endif

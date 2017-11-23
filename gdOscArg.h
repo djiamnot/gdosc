@@ -1,5 +1,8 @@
 #include <string>
 
+#ifndef _GDOSCARG_
+#define _GDOSCARG_
+
 typedef enum _gdOscArgType {
   TYPE_NONE,
 	TYPE_INT32,
@@ -67,3 +70,5 @@ class gdOscArgInt32 : public gdOscArg
 	private:
 		std::string value;
 };
+
+#endif

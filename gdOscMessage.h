@@ -5,6 +5,9 @@
 
 #include "gdOscArg.h"
 
+#ifndef _OSCMESSAGE_
+#define _OSCMESSAGE_
+
 class gdOscMessage{
  public:
   gdOscMessage();
@@ -54,3 +57,5 @@ class OscExcInvalidArgumentType : public OscExc {
 };
 class OscExcOutOfBounds : public OscExc {
 };
+
+#endif
