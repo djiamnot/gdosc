@@ -20,7 +20,6 @@ class OSCclient : public Spatial {
   static void _bind_methods();
 
  public:
-  // UdpTransmitSocket transmitSocket( const osc::IpEndpointName& remoteEndpoint);
   OSCclient();
   void testSend();
 
