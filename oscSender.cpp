@@ -2,7 +2,7 @@
 #include "osc/OscOutboundPacketStream.h"
 
 
-bool gdOscSender::setup(std::string &host, int port) {
+bool gdOscSender::init(std::string host, int port) {
   settings.host = host;
   settings.port = port;
   return setup(settings);

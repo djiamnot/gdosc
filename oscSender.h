@@ -7,6 +7,9 @@
 
 #include "gdOscMessage.h"
 
+#ifndef _SENDERH_
+#define _SENDERH_
+
 struct gdOscSenderSettings {
   std::string host = "localhost";
   int port = 0;
@@ -15,7 +18,7 @@ struct gdOscSenderSettings {
 class gdOscSender{
  public:
   gdOscSender(){};
-  bool setup(std::string &host, int port);
+  bool init(std::string host, int port);
   bool setup(gdOscSenderSettings &settings);
   void clear();
 
@@ -28,3 +31,5 @@ class gdOscSender{
 
   std::unique_ptr<UdpTransmitSocket> sendSocket;
 };
+
+#endif
