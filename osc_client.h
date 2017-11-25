@@ -21,8 +21,13 @@ class OSCclient : public Spatial {
 
  public:
   OSCclient();
+  ~OSCclient(){};
   void testSend();
-
+  void appendInt(int m);
+  void sendMessage();
+  void appendFloat(float m);
+  void appendString(String m);
+  void reset();
  private:
   gdOscSender* osc_sender;
   gdOscMessage msg;

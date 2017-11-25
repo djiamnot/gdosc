@@ -3,6 +3,8 @@
 #include <cstdlib>
 #include <vector>
 
+#include "core/ustring.h"
+
 #include "gdOscArg.h"
 
 #ifndef _OSCMESSAGE_
@@ -26,7 +28,7 @@ class gdOscMessage{
 
   void addIntArg(int32_t arg);
   void addFloatArg(float arg);
-  void addStringArg(std::string arg);
+  void addStringArg(String arg);
 
   int32_t getArgAsInt32(int index, bool typeConvert = false) const;
   float getArgAsFloat(int index, bool typeConvert = false) const;

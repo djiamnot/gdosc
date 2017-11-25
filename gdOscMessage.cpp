@@ -43,8 +43,10 @@ void gdOscMessage::addFloatArg(float arg) {
   args.push_back( new gdOscArgFloat(arg));
 }
 
-void gdOscMessage::addStringArg(std::string arg) {
-  args.push_back( new gdOscArgString(arg));
+void gdOscMessage::addStringArg(String arg) {
+  std::wstring ws(arg.c_str());
+  std::string s(ws.begin(), ws.end());
+  args.push_back( new gdOscArgString(s));
 }
 
 int32_t gdOscMessage::getArgAsInt32(int index, bool typeConvert) const{
