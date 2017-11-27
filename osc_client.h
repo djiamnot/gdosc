@@ -21,7 +21,8 @@ class OSCclient : public Spatial {
 
  public:
   OSCclient();
-  ~OSCclient(){};
+  OSCclient(String host, int port);
+  ~OSCclient();
   void testSend();
   void appendInt(int m);
   void sendMessage();

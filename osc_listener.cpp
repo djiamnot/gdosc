@@ -5,6 +5,12 @@ OSCListener::OSCListener() {
   osc_rcv = new OSCReceiver();
 }
 
+OSCListener::~OSCListener() {
+  if(osc_rcv) {
+    delete osc_rcv;
+  }
+}
+
 void OSCListener::_notification(int what) {
   if (!is_inside_tree()) return;
 

@@ -7,6 +7,20 @@ OSCclient::OSCclient() {
   osc_sender->init(host, 9020);
 }
 
+OSCclient::~OSCclient() {
+  if(osc_sender){
+    delete osc_sender;
+  }
+}
+
+
+OSCclient::OSCclient(String host, int port) {
+  std::wstring ws(host.c_str());
+  std::string _host(ws.begin(), ws.end());
+  osc_sender = new gdOscSender();
+  osc_sender->init(_host, port );
+}
+
 void OSCclient::testSend() {
   msg.addStringArg("test");
   osc_sender->sendMessage(msg);
@@ -40,4 +54,6 @@ void OSCclient::_bind_methods() {
   ClassDB::bind_method(D_METHOD("appendString", "m"), &OSCclient::appendString);
   ClassDB::bind_method(D_METHOD("sendMessage"), &OSCclient::sendMessage);
   ClassDB::bind_method(D_METHOD("reset"), &OSCclient::reset);
+
+
 }

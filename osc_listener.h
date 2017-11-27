@@ -28,6 +28,7 @@ class OSCListener : public Node {
 
  public:
   OSCListener();
+  ~OSCListener();
   String getOscMsgAsString(gdOscMessage m);
 
  protected:
