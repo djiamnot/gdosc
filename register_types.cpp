@@ -2,13 +2,13 @@
 
 #include "register_types.h"
 // #include "object_type_db.h"
-#include "osc_client.h"
+#include "osc_transmitter.h"
 #include "osc_listener.h"
 
 void register_gdosc_types() {
 
-  //ObjectTypeDB::register_type<OSCclient>();
-  ClassDB::register_class<OSCclient>();
+  //ObjectTypeDB::register_type<OSCtransmitter>();
+  ClassDB::register_class<OSCtransmitter>();
   ClassDB::register_class<OSCListener>();
 }
 

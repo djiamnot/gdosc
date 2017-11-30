@@ -13,16 +13,17 @@
 #ifndef GDOSC_H
 #define GDOSC_H
 
-class OSCclient : public Spatial {
-  GDCLASS(OSCclient, Spatial);
+class OSCtransmitter : public Spatial {
+  GDCLASS(OSCtransmitter, Spatial);
 
  protected:
   static void _bind_methods();
 
  public:
-  OSCclient();
-  OSCclient(String host, int port);
-  ~OSCclient();
+  OSCtransmitter();
+  OSCtransmitter(String host, int port);
+  ~OSCtransmitter();
+  void init(String host, int port);
   void testSend();
   void appendInt(int m);
   void sendMessage();
