@@ -10,7 +10,6 @@ void register_gdosc_types() {
   //ObjectTypeDB::register_type<OSCtransmitter>();
   ClassDB::register_class<OSCtransmitter>();
   ClassDB::register_class<OSCListener>();
-  ClassDB::register_class<gdOscMessage>();
 }
 
 void unregister_gdosc_types() {

@@ -142,10 +142,3 @@ void gdOscMessage::clear(){
 	}
 	args.clear();
 }
-
-void gdOscMessage::_bind_methods() {
-  std::cout << "binding methods in gdOscMessage" << std::endl;
-  ClassDB::bind_method(D_METHOD("addIntArg", "m"), &gdOscMessage::addIntArg);
-  ClassDB::bind_method(D_METHOD("addFloatArg", "m"), &gdOscMessage::addFloatArg);
-  ClassDB::bind_method(D_METHOD("addStringArg", "m"), &gdOscMessage::addStringArg);
-}

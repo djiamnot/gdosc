@@ -14,8 +14,7 @@
 
 #include "utils.h"
 
-class gdOscMessage : public Reference {
-  GDCLASS(gdOscMessage, Reference);
+class gdOscMessage {
  public:
   gdOscMessage();
   ~gdOscMessage();
@@ -45,9 +44,6 @@ class gdOscMessage : public Reference {
 
 
   gdOscMessage& copy(const gdOscMessage& other);
-
- protected:
-  static void _bind_methods();
 
  private:
 
