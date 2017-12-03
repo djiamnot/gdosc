@@ -3,14 +3,19 @@
 #include <cstdlib>
 #include <vector>
 
+#include "core/reference.h"
 #include "core/ustring.h"
 
 #include "gdOscArg.h"
 
+
 #ifndef _OSCMESSAGE_
 #define _OSCMESSAGE_
 
-class gdOscMessage{
+#include "utils.h"
+
+class gdOscMessage : public Reference {
+  GDCLASS(gdOscMessage, Reference);
  public:
   gdOscMessage();
   ~gdOscMessage();
@@ -41,13 +46,15 @@ class gdOscMessage{
 
   gdOscMessage& copy(const gdOscMessage& other);
 
+ protected:
+  static void _bind_methods();
 
  private:
 
-	std::string address; //< OSC address, must start with a /
+  std::string address; //< OSC address, must start with a /
 	// std::vector<ofxOscArg*> args; //< current arguments
 
-	std::string remoteHost; //< host name/ip the message was sent from
+  std::string remoteHost; //< host name/ip the message was sent from
   int remotePort; //< port the message was sent from
 
   std::vector<gdOscArg*> args;

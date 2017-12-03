@@ -1,5 +1,6 @@
 #include "gdOscMessage.h"
 
+
 gdOscMessage::gdOscMessage() : remoteHost(""), remotePort(0) {}
 
 gdOscMessage::~gdOscMessage(){
@@ -44,8 +45,9 @@ void gdOscMessage::addFloatArg(float arg) {
 }
 
 void gdOscMessage::addStringArg(String arg) {
-  std::wstring ws(arg.c_str());
-  std::string s(ws.begin(), ws.end());
+  std::string s(utils::gdStringToString(arg));
+  // std::wstring ws(arg.c_str());
+  // std::string s(ws.begin(), ws.end());
   args.push_back( new gdOscArgString(s));
 }
 
@@ -135,8 +137,15 @@ void gdOscMessage::clear(){
 	address = "";
 	remoteHost = "";
 	remotePort = 0;
-	// for(unsigned int i = 0; i < args.size(); ++i){
-	// 	delete args[i];
-	// }
-	// args.clear();
+	for(unsigned int i = 0; i < args.size(); ++i){
+		delete args[i];
+	}
+	args.clear();
+}
+
+void gdOscMessage::_bind_methods() {
+  std::cout << "binding methods in gdOscMessage" << std::endl;
+  ClassDB::bind_method(D_METHOD("addIntArg", "m"), &gdOscMessage::addIntArg);
+  ClassDB::bind_method(D_METHOD("addFloatArg", "m"), &gdOscMessage::addFloatArg);
+  ClassDB::bind_method(D_METHOD("addStringArg", "m"), &gdOscMessage::addStringArg);
 }

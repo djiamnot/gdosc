@@ -38,7 +38,7 @@ class OSCListener : public Node {
  private:
   void _notification(int what);
   OSCReceiver* osc_rcv;
-  gdOscMessage cur_msg;
+  // gdOscMessage cur_msg;
 
 };
 #endif

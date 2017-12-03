@@ -25,11 +25,13 @@ class OSCtransmitter : public Spatial {
   ~OSCtransmitter();
   void init(String host, int port);
   void testSend();
+  void setAddress(String a);
   void appendInt(int m);
   void sendMessage();
   void appendFloat(float m);
   void appendString(String m);
   void reset();
+
  private:
   gdOscSender* osc_sender;
   gdOscMessage msg;

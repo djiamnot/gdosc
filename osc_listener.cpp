@@ -25,7 +25,7 @@ void OSCListener::_notification(int what) {
         osc_rcv->getNextMessage(&message);
         String msg = getOscMsgAsString(message);
         print_line(msg);
-        cur_msg = message;
+        // cur_msg = message;
         emit_signal("osc_message", msg);
       }
     }
