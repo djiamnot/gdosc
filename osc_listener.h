@@ -18,6 +18,7 @@
 #include "ip/PacketListener.h"
 
 #include "oscReceiver.h"
+#include"core/dictionary.h"
 
 #ifndef GDOSCL_H
 #define GDOSCL_H
@@ -30,6 +31,7 @@ class OSCListener : public Node {
   OSCListener();
   ~OSCListener();
   String getOscMsgAsString(gdOscMessage m);
+  Array getOscMessageAsArray(gdOscMessage m);
 
  protected:
   static void _bind_methods();

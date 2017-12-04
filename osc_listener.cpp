@@ -23,8 +23,9 @@ void OSCListener::_notification(int what) {
       if(osc_rcv->hasWaitingMessages()){
         gdOscMessage message;
         osc_rcv->getNextMessage(&message);
-        String msg = getOscMsgAsString(message);
-        print_line(msg);
+        // String msg = getOscMsgAsString(message);
+        Array msg = getOscMessageAsArray(message);
+        // print_line(msg);
         // cur_msg = message;
         emit_signal("osc_message", msg);
       }
@@ -53,6 +54,15 @@ String OSCListener::getOscMsgAsString(gdOscMessage m) {
     }
   }
   return String(msg_string.c_str());
+}
+
+Array OSCListener::getOscMessageAsArray(gdOscMessage m) {
+  Array a;
+  a.append(1);
+  a.append(3.15);
+  a.append("boohoo");
+
+  return a;
 }
 
 // gdOscMessage OSCListener::_osc_message(){
