@@ -137,8 +137,8 @@ void gdOscMessage::clear(){
 	address = "";
 	remoteHost = "";
 	remotePort = 0;
-	for(unsigned int i = 0; i < args.size(); ++i){
-		delete args[i];
-	}
+	// for(unsigned int i = 0; i < args.size(); ++i){
+	// 	delete args[i];
+	// }
 	args.clear();
 }

@@ -91,7 +91,6 @@ bool OSCReceiver::getNextMessage(gdOscMessage* message){
   if (messages.size() == 0) {
     return false;
   }
-
   gdOscMessage* src_message = messages.front();
 	message->copy(*src_message);
 	delete src_message;
