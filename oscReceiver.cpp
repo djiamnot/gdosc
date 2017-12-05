@@ -12,9 +12,9 @@ OSCReceiver::OSCReceiver() {
 }
 
 bool OSCReceiver::setup(int port) {
-  // if (listenSocket) {
-  //   stop();
-  // }
+  if (listenSocket) {
+    stop();
+  }
   settings.port = port;
   return start();
 }
@@ -100,6 +100,6 @@ bool OSCReceiver::getNextMessage(gdOscMessage* message){
   return true;
 }
 
-// void OSCReceiver::stop() {
-//   listenSocket.reset();
-// }
+void OSCReceiver::stop() {
+  listenSocket = nullptr;
+}

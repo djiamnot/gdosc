@@ -11,6 +11,11 @@ OSCListener::~OSCListener() {
   }
 }
 
+bool OSCListener::setup(int port) {
+  std::cout << "setting port: " << port << std::endl;
+  osc_rcv->setup(port);
+}
+
 void OSCListener::_notification(int what) {
   if (!is_inside_tree()) return;
 
@@ -19,17 +24,17 @@ void OSCListener::_notification(int what) {
     set_process(true);
   } break;
 
-    case NOTIFICATION_PROCESS: {
-      if(osc_rcv->hasWaitingMessages()){
-        gdOscMessage message;
-        osc_rcv->getNextMessage(&message);
-        // String msg = getOscMsgAsString(message);
-        Array msg = getOscMessageAsArray(message);
-        // print_line(msg);
-        // cur_msg = message;
-        emit_signal("osc_message", msg);
-      }
+  case NOTIFICATION_PROCESS: {
+    if(osc_rcv->hasWaitingMessages()){
+      gdOscMessage message;
+      osc_rcv->getNextMessage(&message);
+      // String msg = getOscMsgAsString(message);
+      Array msg = getOscMessageAsArray(message);
+      // print_line(msg);
+      // cur_msg = message;
+      emit_signal("osc_message", msg);
     }
+  }
   }
 }
 
@@ -58,10 +63,21 @@ String OSCListener::getOscMsgAsString(gdOscMessage m) {
 
 Array OSCListener::getOscMessageAsArray(gdOscMessage m) {
   Array a;
-  a.append(1);
-  a.append(3.15);
-  a.append("boohoo");
-
+  a.append(String(m.getAddress().c_str()));
+  for(int i =0; i < m.getNumArgs(); i++){
+    if(m.getArgType(i) == TYPE_INT32) {
+      a.append(m.getArgAsInt32(i));
+    }
+    else if(m.getArgType(i) == TYPE_FLOAT) {
+      a.append(m.getArgAsFloat(i));
+    }
+    else if(m.getArgType(i) == TYPE_STRING) {
+      a.append(m.getArgAsString(i).c_str());
+    }
+    else {
+      a.append("unknown");
+    }
+  }
   return a;
 }
 
@@ -72,6 +88,10 @@ Array OSCListener::getOscMessageAsArray(gdOscMessage m) {
 
 void OSCListener::_bind_methods() {
   std::cout << "will be binding here" << std::endl;
+
+  ClassDB::bind_method(D_METHOD("setup", "port"), &OSCListener::setup);
+
   ADD_SIGNAL(MethodInfo("osc_message"));
+
 
 }

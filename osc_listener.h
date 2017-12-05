@@ -30,6 +30,7 @@ class OSCListener : public Node {
  public:
   OSCListener();
   ~OSCListener();
+  bool setup(int port);
   String getOscMsgAsString(gdOscMessage m);
   Array getOscMessageAsArray(gdOscMessage m);
 
