@@ -4,10 +4,9 @@
 #include "oscReceiver.h"
 
 
-OSCReceiver::OSCReceiver() {
-  std::cout << "OSC receiver" << std::endl;
+OSCReceiver::OSCReceiver(int port) {
   listenSocket = nullptr;
-  setup(18000);
+  setup(port);
   start();
 }
 
@@ -23,6 +22,7 @@ bool OSCReceiver::start(){
   try {
     IpEndpointName name(IpEndpointName::ANY_ADDRESS, settings.port);
     listenSocket = new UdpListeningReceiveSocket(name, this);
+    std::cout << "OSC receiver on port " << settings.port << std::endl;
   }
   catch (const std::exception& e) {
     std::cout << "receiver: " << e.what() << std::endl;
@@ -101,5 +101,6 @@ bool OSCReceiver::getNextMessage(gdOscMessage* message){
 }
 
 void OSCReceiver::stop() {
-  listenSocket = nullptr;
+  delete listenSocket;
+  listenSocket = NULL;
 }

@@ -33,6 +33,8 @@ class OSCListener : public Node {
   bool setup(int port);
   String getOscMsgAsString(gdOscMessage m);
   Array getOscMessageAsArray(gdOscMessage m);
+  void set_port(int port);
+  int get_port () { return _port;}
 
  protected:
   static void _bind_methods();
@@ -41,6 +43,7 @@ class OSCListener : public Node {
  private:
   void _notification(int what);
   OSCReceiver* osc_rcv;
+  int _port;
   // gdOscMessage cur_msg;
 
 };

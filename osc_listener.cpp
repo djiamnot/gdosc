@@ -1,14 +1,21 @@
 #include "osc_listener.h"
 
 OSCListener::OSCListener() {
-  std::cout << "OSC listener" << std::endl;
-  osc_rcv = new OSCReceiver();
+  std::cout << "OSC listener port: " << _port << std::endl;
+  osc_rcv = new OSCReceiver(_port);
 }
 
 OSCListener::~OSCListener() {
   if(osc_rcv) {
     delete osc_rcv;
   }
+}
+
+void OSCListener::set_port(int port) {
+  delete osc_rcv;
+  _port = port;
+  osc_rcv = new OSCReceiver(_port);
+
 }
 
 bool OSCListener::setup(int port) {
@@ -90,8 +97,10 @@ void OSCListener::_bind_methods() {
   std::cout << "will be binding here" << std::endl;
 
   ClassDB::bind_method(D_METHOD("setup", "port"), &OSCListener::setup);
-
-  ADD_SIGNAL(MethodInfo("osc_message"));
+  ClassDB::bind_method(D_METHOD("set_port", "port"), &OSCListener::set_port);
+  ClassDB::bind_method(D_METHOD("get_port"), &OSCListener::get_port);
+  ADD_PROPERTY(PropertyInfo(Variant::INT, "port"), "set_port", "get_port")
+    ;  ADD_SIGNAL(MethodInfo("osc_message"));
 
 
 }
