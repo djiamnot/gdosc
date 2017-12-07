@@ -46,9 +46,6 @@ bool OSCReceiver::start(){
 }
 
 void OSCReceiver::ProcessMessage(const osc::ReceivedMessage &m, const IpEndpointName &remoteEndpoint){
-  // for (::osc::ReceivedMessage::const_iterator arg = m.ArgumentsBegin(); arg != m.ArgumentsEnd(); ++arg){
-  //   std::cout << arg << std::endl;
-  // }
 
   gdOscMessage* msg = new gdOscMessage();
 

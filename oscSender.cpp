@@ -8,6 +8,7 @@ bool gdOscSender::init(std::string host, int port) {
   return setup(settings);
 }
 
+
 bool gdOscSender::setup(gdOscSenderSettings &settings){
   UdpTransmitSocket *socket = nullptr;
   this->settings = settings;
@@ -15,6 +16,7 @@ bool gdOscSender::setup(gdOscSenderSettings &settings){
     IpEndpointName name = IpEndpointName(settings.host.c_str(), settings.port);
     socket = new UdpTransmitSocket(name);
     sendSocket.reset(socket);
+    std::cout << "socket should be reset now" << std::endl;
   }
   catch(std::exception &e){
     std::cout << "failed creating sendSocket because: "  << e.what() << std::endl;

@@ -1,9 +1,7 @@
 #include "osc_transmitter.h"
 
 OSCtransmitter::OSCtransmitter() {
-  std::string host = "localhost";
   osc_sender = new gdOscSender();
-  // osc_sender->init(host, 9020);
 }
 
 OSCtransmitter::~OSCtransmitter() {
@@ -15,9 +13,6 @@ OSCtransmitter::~OSCtransmitter() {
 
 void OSCtransmitter::init(String host, int port) {
   std::string _host(utils::gdStringToString(host));
-  // std::wstring ws(host.c_str());
-  // std::string _host(ws.begin(), ws.end());
-  // osc_sender = new gdOscSender();
   osc_sender->init(_host, port );
 }
 
