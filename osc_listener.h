@@ -34,8 +34,8 @@ class OSCListener : public Object {
   bool setup(int port);
   String getOscMsgAsString(gdOscMessage m);
   Array getOscMessageAsArray(gdOscMessage m);
-  /* void set_port(int port); */
-  /* int get_port () { return _port;} */
+  void set_port(int port);
+  int get_port () { return _port;}
   Array get_msg();
 
  protected:

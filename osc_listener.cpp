@@ -1,14 +1,16 @@
 #include "osc_listener.h"
 
 OSCListener::OSCListener() {
-  int port = 18002;
+  _port = 18002;
   try {
-  osc_rcv = new OSCReceiver(port);
-  std::cout << "OSC listener port: " << port << std::endl;
+  osc_rcv = new OSCReceiver(_port);
+  std::cout << "OSC listener port: " << _port << std::endl;
+  emit_signal("osc_listener_ready");
   }
   catch (const std::exception& e) {
     std::cout << "Constructor tried to instantiate OSCReceiver but " << e.what() << std::endl;
   }
+
 }
 
 OSCListener::~OSCListener() {
@@ -17,18 +19,18 @@ OSCListener::~OSCListener() {
   }
 }
 
-// void OSCListener::set_port(int port) {
-//   delete osc_rcv;
-//   _port = port;
-//   osc_rcv = new OSCReceiver(_port);
+void OSCListener::set_port(int port) {
+  delete osc_rcv;
+  _port = port;
+  osc_rcv = new OSCReceiver(_port);
 
-// }
+}
 
 bool OSCListener::setup(int port) {
-
+  _port = port;
   try {
-    osc_rcv->setup(port);
-    std::cout << "setting port: " << port << std::endl;
+    osc_rcv->setup(_port);
+    std::cout << "setting port: " << _port << std::endl;
   }
   catch (const std::exception& e) {
     std::cout << "listener.setup failed: " << e.what() << std::endl;
@@ -107,16 +109,17 @@ Array OSCListener::getOscMessageAsArray(gdOscMessage m) {
 
 Array OSCListener::get_msg(){
   std::cout << "get_msg called" << std::endl;
-  if(osc_rcv->hasWaitingMessages()){
-    gdOscMessage message;
-    osc_rcv->getNextMessage(&message);
-    // String msg_str = getOscMsgAsString(message);
-    // Array msg;
-    msg = getOscMessageAsArray(message);
-    // emit_signal("osc_message");
-    std::cout << "osc_message emited" << std::endl;
-    return msg;
-    }
+  std::cout << __func__ << " :: calling hasWaitingMessages : " << osc_rcv->hasWaitingMessages() << std::endl;
+  // if(osc_rcv->hasWaitingMessages()){
+  //   gdOscMessage message;
+  //   osc_rcv->getNextMessage(&message);
+  //   // String msg_str = getOscMsgAsString(message);
+  //   // Array msg;
+  //   msg = getOscMessageAsArray(message);
+  //   emit_signal("osc_message", msg);
+  //   std::cout << "osc_message emited" << std::endl;
+  //   // return msg;
+  //   }
 }
 
 // gdOscMessage OSCListener::_osc_message(){
@@ -128,13 +131,14 @@ void OSCListener::_bind_methods() {
   std::cout << "will be binding here" << std::endl;
 
   ClassDB::bind_method(D_METHOD("setup", "port"), &OSCListener::setup);
-  // ClassDB::bind_method(D_METHOD("set_port", "port"), &OSCListener::set_port);
-  // ClassDB::bind_method(D_METHOD("get_port"), &OSCListener::get_port);
+  ClassDB::bind_method(D_METHOD("set_port", "port"), &OSCListener::set_port);
+  ClassDB::bind_method(D_METHOD("get_port"), &OSCListener::get_port);
   // ClassDB::bind_method(D_METHOD("get_msg"), &OSCListener::get_msg);
   ClassDB::bind_method(D_METHOD("get_msg"), &OSCListener::get_msg);
   // ADD_PROPERTY(PropertyInfo(Variant::INT, "port"), "set_port", "get_port");
-  // ADD_SIGNAL(MethodInfo("osc_message"));
+  ADD_SIGNAL(MethodInfo("osc_message"));
   // ADD_SIGNAL(MethodInfo("ready"));
+  ADD_SIGNAL(MethodInfo("osc_listener_ready"));
 
 
 }
