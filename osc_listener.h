@@ -40,15 +40,12 @@ class OSCListener : public Object {
 
  protected:
   static void _bind_methods();
-  // gdOscMessage _osc_message();
   std::thread listener;
 
  private:
-  // void _notification(int what);
   bool start();
   OSCReceiver* osc_rcv;
   int _port;
-  // gdOscMessage cur_msg;
   Array msg;
 
 };
