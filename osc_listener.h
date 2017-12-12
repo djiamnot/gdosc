@@ -19,13 +19,14 @@
 
 #include "oscReceiver.h"
 #include"core/dictionary.h"
+#include "core/object.h")
 
 #ifndef GDOSCL_H
 #define GDOSCL_H
 
 
-class OSCListener : public Node {
-  GDCLASS(OSCListener, Node);
+class OSCListener : public Object {
+  GDCLASS(OSCListener, Object);
 
  public:
   OSCListener();
@@ -35,16 +36,20 @@ class OSCListener : public Node {
   Array getOscMessageAsArray(gdOscMessage m);
   void set_port(int port);
   int get_port () { return _port;}
+  Array get_msg();
 
  protected:
   static void _bind_methods();
   // gdOscMessage _osc_message();
+  std::thread listener;
 
  private:
-  void _notification(int what);
+  // void _notification(int what);
+  bool start();
   OSCReceiver* osc_rcv;
   int _port;
   // gdOscMessage cur_msg;
+  Array msg;
 
 };
 #endif

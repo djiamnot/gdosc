@@ -91,7 +91,6 @@ bool OSCReceiver::getNextMessage(gdOscMessage* message){
   gdOscMessage* src_message = messages.front();
 	message->copy(*src_message);
 	delete src_message;
-
 	messages.pop_front();
 
   return true;
