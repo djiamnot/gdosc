@@ -11,7 +11,6 @@ OSCListener::OSCListener() {
   catch (const std::exception& e) {
     std::cout << "Constructor tried to instantiate OSCReceiver but " << e.what() << std::endl;
   }
-
 }
 
 OSCListener::~OSCListener() {
@@ -24,7 +23,6 @@ void OSCListener::set_port(int port) {
   delete osc_rcv;
   _port = port;
   osc_rcv = new OSCReceiver(_port);
-
 }
 
 bool OSCListener::setup(int port) {
@@ -106,12 +104,10 @@ Array OSCListener::get_msg(){
 }
 
 void OSCListener::_bind_methods() {
-  std::cout << "will be binding here" << std::endl;
-
   ClassDB::bind_method(D_METHOD("setup", "port"), &OSCListener::setup);
   ClassDB::bind_method(D_METHOD("set_port", "port"), &OSCListener::set_port);
   ClassDB::bind_method(D_METHOD("get_port"), &OSCListener::get_port);
-   ClassDB::bind_method(D_METHOD("get_msg"), &OSCListener::get_msg);
-   ADD_SIGNAL(MethodInfo("osc_message"));
-   ADD_SIGNAL(MethodInfo("osc_listener_ready"));
+  ClassDB::bind_method(D_METHOD("get_msg"), &OSCListener::get_msg);
+  ADD_SIGNAL(MethodInfo("osc_message"));
+  ADD_SIGNAL(MethodInfo("osc_listener_ready"));
 }

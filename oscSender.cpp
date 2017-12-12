@@ -37,7 +37,7 @@ void gdOscSender::sendMessage(gdOscMessage &message) {
 	}
 
 	// setting this much larger as it gets trimmed down to the size its using before being sent.
-	// TODO: much better if we could make this dynamic? Maybe have ofxOscMessage return its size?
+  // TODO: find a way to make it dynamic?
 	static const int OUTPUT_BUFFER_SIZE = 327680;
 	char buffer[OUTPUT_BUFFER_SIZE];
 	osc::OutboundPacketStream p(buffer, OUTPUT_BUFFER_SIZE);

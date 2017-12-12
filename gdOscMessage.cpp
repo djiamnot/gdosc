@@ -46,8 +46,6 @@ void gdOscMessage::addFloatArg(float arg) {
 
 void gdOscMessage::addStringArg(String arg) {
   std::string s(utils::gdStringToString(arg));
-  // std::wstring ws(arg.c_str());
-  // std::string s(ws.begin(), ws.end());
   args.push_back( new gdOscArgString(s));
 }
 
