@@ -103,11 +103,21 @@ Array OSCListener::get_msg(){
   }
 }
 
+bool OSCListener::active(bool a){
+  // TODO: activate/desactivate OSC listening
+}
+
 void OSCListener::_bind_methods() {
+
+  // methods
   ClassDB::bind_method(D_METHOD("setup", "port"), &OSCListener::setup);
   ClassDB::bind_method(D_METHOD("set_port", "port"), &OSCListener::set_port);
   ClassDB::bind_method(D_METHOD("get_port"), &OSCListener::get_port);
   ClassDB::bind_method(D_METHOD("get_msg"), &OSCListener::get_msg);
+
+  // Properties
+
+  // signals
   ADD_SIGNAL(MethodInfo("osc_message"));
   ADD_SIGNAL(MethodInfo("osc_listener_ready"));
 }

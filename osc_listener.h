@@ -5,7 +5,7 @@
 #include <cstdlib>
 #include <thread>
 
-#include "scene/main/node.h"
+#include "scene/3d/spatial.h"
 #include "print_string.h"
 #include "core/array.h"
 #include "core/variant.h"
@@ -25,8 +25,8 @@
 #define GDOSCL_H
 
 
-class OSCListener : public Object {
-  GDCLASS(OSCListener, Object);
+class OSCListener : public Spatial {
+  GDCLASS(OSCListener, Spatial);
 
  public:
   OSCListener();
@@ -37,6 +37,7 @@ class OSCListener : public Object {
   void set_port(int port);
   int get_port () { return _port;}
   Array get_msg();
+  bool active(bool a);
 
  protected:
   static void _bind_methods();
