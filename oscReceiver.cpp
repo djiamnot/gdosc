@@ -7,7 +7,7 @@
 OSCReceiver::OSCReceiver(int port) {
   listenSocket = nullptr;
   setup(port);
-  start();
+  // start();
 }
 
 bool OSCReceiver::setup(int port) {
