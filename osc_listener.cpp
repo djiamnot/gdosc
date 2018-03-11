@@ -20,7 +20,7 @@ OSCListener::~OSCListener() {
   }
 }
 
-void OSCListener::set_port(int port) {
+void OSCListener::setPort(int port) {
   delete osc_rcv;
   _port = port;
   osc_rcv = new OSCReceiver(_port);
@@ -41,7 +41,7 @@ bool OSCListener::setup(int port) {
 bool OSCListener::start() {
   listener = std::thread([this]{
       try {
-        get_msg();
+        getMessage();
       }
       catch (const std::exception& e) {
         std::cout << "cannot get message: " << e.what() << std::endl;
@@ -94,7 +94,7 @@ Array OSCListener::getOscMessageAsArray(gdOscMessage m) {
   return a;
 }
 
-Array OSCListener::get_msg(){
+Array OSCListener::getMessage(){
   while(true){
     if(osc_rcv->hasWaitingMessages()){
       gdOscMessage message;
@@ -109,9 +109,9 @@ void OSCListener::_bind_methods() {
   std::cout << "will be binding here" << std::endl;
 
   ClassDB::bind_method(D_METHOD("setup", "port"), &OSCListener::setup);
-  ClassDB::bind_method(D_METHOD("set_port", "port"), &OSCListener::set_port);
-  ClassDB::bind_method(D_METHOD("get_port"), &OSCListener::get_port);
-   ClassDB::bind_method(D_METHOD("get_msg"), &OSCListener::get_msg);
+  ClassDB::bind_method(D_METHOD("setPort", "port"), &OSCListener::setPort);
+  ClassDB::bind_method(D_METHOD("getPort"), &OSCListener::getPort);
+   ClassDB::bind_method(D_METHOD("getMessage"), &OSCListener::getMessage);
    ADD_SIGNAL(MethodInfo("osc_message"));
    ADD_SIGNAL(MethodInfo("osc_listener_ready"));
 }
