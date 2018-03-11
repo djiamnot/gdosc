@@ -21,7 +21,7 @@ Clone https://github.com/djiamnot/gdOscTest. See the README for information abou
 ## Known issues
 At this time, gdosc supports only three data-types: _float_, _int_, and _string_. This is sufficient for me right now, but merge requests are welcome!
 
-Theoretically, this should work on any OS but it has been developed and tested on Linux.
+Theoretically, this should work on any OS but it has been developed and tested on Linux with Godot3.0
 
 ## Worlkflow
 
