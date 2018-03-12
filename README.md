@@ -27,7 +27,7 @@ Theoretically, this should work on any OS but it has been developed and tested o
 
 ## Worlkflow
 
-First you need to instantiate OSCListener class. In my current workflow, I attach a script to root node in the scene. OSCListener emits a signal `osdc_message` which you can pick up and do with what you want
+First you need to instantiate OSCListener class. In my current workflow, I attach a script to root node in the scene. OSCListener emits a signal `osc_message` which you can pick up and do with what you want
 
 ```python
 
