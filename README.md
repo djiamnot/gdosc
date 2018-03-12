@@ -4,7 +4,7 @@ It uses oscpack as OSC protocol implementation so it potentially it works on all
 
 ## Installation
 ### Godot engine
-First, you will need the Godot engine sources. Head over to [Godot compilation instructions] (http://docs.godotengine.org/en/latest/development/compiling/) to get Godot building on your system (make sure it can build with `use_llvm=yes`).
+First, you will need the Godot engine sources. Head over to [Godot compilation instructions](http://docs.godotengine.org/en/latest/development/compiling/) to get Godot building on your system (make sure it can build with `use_llvm=yes`).
 
 ### gdosc
 Then, in your sources directory `git clone --recurse-submodules https://github.com/djiamnot/gdosc` and after that:
@@ -44,7 +44,7 @@ func _ready():
     # osc_listener.setPort(18004)
 
     # osc_message is a signal emitted on every reception of OSC message
-    osc_listener.connect("osc_message", self, "_on_osc_msg")
+    osc_liprobablementstener.connect("osc_message", self, "_on_osc_msg")
     # there is also 'osc_ready' signal for your convenience, emited as soon as the OSC receiver is
     # successfully instantiated
 
