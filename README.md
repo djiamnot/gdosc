@@ -3,10 +3,19 @@ This is a Godot game engine module for receiving and sending Open Sound Control 
 It uses oscpack as OSC protocol implementation so it potentially it works on all platforms that can handle oscpack. However it has been tested only on Linux (and, for the moment, I am not interested in any other platforms).
 
 ## Installation
+
 ### Godot engine
 First, you will need the Godot engine sources. Head over to [Godot compilation instructions](http://docs.godotengine.org/en/latest/development/compiling/) to get Godot building on your system (make sure it can build with `use_llvm=yes`).
 
 Then copy or link `gdosc` to `godot/modules` and recompile Godot with `scons platform=x11 use_llvm=yes`
+
+### deps
+
+#### linux
+
+Make sure you have clang++ compiler installed:
+
+`sudo apt install clang`
 
 ### gdosc
 Then, in your sources directory `git clone --recurse-submodules https://github.com/djiamnot/gdosc` and after that:
