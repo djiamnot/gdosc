@@ -13,11 +13,30 @@ Then copy or link `gdosc` to `godot/modules` and recompile Godot with `scons pla
 
 #### linux
 
-Make sure you have clang++ compiler installed:
+If you wants to sue clang, install it with:
 
 `sudo apt install clang`
 
+If you are using gcc, just skip the *use_llvm=yes* and it will be ok.
+
+#### git
+
+If you are not familiar with git, make sur eit is installed:
+
+`sudo apt install git`
+
+Generate SSH keys by following this [tutorial](https://www.siteground.com/kb/generate_ssh_key_in_linux/) and add them to [github](https://help.github.com/articles/adding-a-new-ssh-key-to-your-github-account/) - HTTPS links are not working with submodules!
+
+Once, use these 2 commands to use to get the repo up and running:
+
+`git clone git@github.com:djiamnot/gdosc.git`
+
+`git pull && git submodule init && git submodule update && git submodule status`
+
+It will retrieve *oscpack* repo.
+
 ### gdosc
+
 Then, in your sources directory `git clone --recurse-submodules https://github.com/djiamnot/gdosc` and after that:
 
 `cd godot`
