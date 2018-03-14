@@ -10,32 +10,34 @@
 
 #include "oscSender.h"
 
-
 #ifndef GDOSC_H
 #define GDOSC_H
 
-class OSCtransmitter : public Spatial {
-  GDCLASS(OSCtransmitter, Spatial);
+class OSCtransmitter : public Node {
+    GDCLASS(OSCtransmitter, Node);
 
- protected:
-  static void _bind_methods();
+protected:
+    static void _bind_methods();
 
- public:
-  OSCtransmitter();
-  OSCtransmitter(String host, int port);
-  ~OSCtransmitter();
-  void init(String host, int port);
-  void testSend();
-  void setAddress(String a);
-  void appendInt(int m);
-  void sendMessage();
-  void appendFloat(float m);
-  void appendString(String m);
-  void reset();
+public:
 
- private:
-  gdOscSender* osc_sender;
-  gdOscMessage msg;
+    OSCtransmitter();
+    OSCtransmitter(String host, int port);
+    ~OSCtransmitter();
+    void init(String host, int port, int buffersize);
+    void testSend();
+    void setAddress(String a);
+    void sendMessage();
+    void appendInt(int m);
+    void appendFloat(float m);
+    void appendString(String m);
+    void reset();
+
+private:
+
+    gdOscSender* osc_sender;
+    gdOscMessage msg;
+
 };
 
 #endif

@@ -119,28 +119,24 @@ Once done, attach a script to it who looks like this:
 ```python
 extends OSCtransmitter
 
-var new_sender = OSCtransmitter.new()
-var parent
-
 signal exit()
 
 func _ready():
-    set_process(true)
-    parent = get_parent()
-	# set the destination address and port
-    new_sender.init("localhost", 9020)
+	set_process(true)
+	# initialisation of OSC sender, on port 25000 and with a buffer size of 1024
+	init("localhost", 25000, 1024)
+	framecount = 0
+	pass
 
 func _process(delta):
-	# build the message
-	# OSC address
-    new_sender.setAddress("/update")
-	# some other parameters that we want to include
-    new_sender.appendString(parent.get_name())
-    new_sender.appendFloat(parent.translation.x)
-    new_sender.appendFloat(parent.translation.y)
-    new_sender.appendFloat(parent.translation.z)
-	# actually send the message
-    new_sender.sendMessage()
-	# reset the queue
-    new_sender.reset()
+	# creation of the new message
+	setAddress("/update")
+	# appending data
+	appendInt(framecount)
+	# sending the message to the client
+	sendMessage()
+	# cleanup of the message
+	reset()
+	framecount += 1
+	pass
 ```
