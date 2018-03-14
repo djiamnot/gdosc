@@ -17,7 +17,7 @@ If you wants to use clang, install it with:
 
 `sudo apt install clang`
 
-If you are using gcc, just skip *use_llvm=yes* and it will be ok.
+If you are using gcc, just skip the *use_llvm=yes* and it will be ok.
 
 #### git
 
@@ -108,7 +108,13 @@ func _on_osc_message(val):
             translate(Vector3(val[2], val[3], val[4]))
 ```
 
-And here's an approach for sending:
+### Sending messages
+
+First of all, you need to add an **OSCtransmitter** node in your scene. It is located in the **Spatial** subtree, between *NavigationMeshInstance* and *Path*.
+
+![OSCtransmitter in creation menu](https://frankiezafe.org/images/7/7c/Godot_gdosc_OSCtransmitter.png)
+
+Once done, attach a script to it who looks like this:
 
 ```python
 extends OSCtransmitter
