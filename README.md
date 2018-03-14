@@ -110,11 +110,11 @@ func _on_osc_message(val):
 
 ### Sending messages
 
-First of all, you need to add an **OSCtransmitter** node in your scene. It is located in the **Spatial** subtree, between *NavigationMeshInstance* and *Path*.
+First of all, you need to add an **OSCtransmitter** node in your scene. It is located in the firt level of the tree, between *HTTPRequest* and *ResourcePreloader*.
 
 ![OSCtransmitter in creation menu](https://frankiezafe.org/images/7/7c/Godot_gdosc_OSCtransmitter.png)
 
-Once done, attach a script to it who looks like this:
+Once done, attach a script to it who looks like this:S
 
 ```python
 extends OSCtransmitter
