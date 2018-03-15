@@ -4,45 +4,59 @@
 #include "oscReceiver.h"
 
 
-OSCReceiver::OSCReceiver(int port) {
-  listenSocket = nullptr;
-  setup(port);
-  // start();
+OSCReceiver::OSCReceiver(int port):
+listenSocket(0)
+{
+//   setup(port);
+  settings.port = port;
 }
 
-bool OSCReceiver::setup(int port) {
-  if (listenSocket) {
-    stop();
-  }
-  settings.port = port;
-  return start();
+OSCReceiver::~OSCReceiver() {
+	stop();
 }
+
+// bool OSCReceiver::setup(int port) {
+//   stop();
+//   settings.port = port;
+//   return start();
+// }
 
 bool OSCReceiver::start(){
   try {
+	  
     IpEndpointName name(IpEndpointName::ANY_ADDRESS, settings.port);
     listenSocket = new UdpListeningReceiveSocket(name, this);
     std::cout << "OSC receiver on port " << settings.port << std::endl;
-  }
-  catch (const std::exception& e) {
+	
+  } catch (const std::exception& e) {
+	  
     std::cout << "receiver: " << e.what() << std::endl;
+	
   }
 
   listenThread = std::thread([this]{
+	  
       std::cout << "start thread" << std::endl;
+	  
       while(listenSocket) {
-        std::cout << "do stuff" << std::endl;
+		  
+		std::cout << "starting socket thread on " << settings.port << std::endl;
+		
         try {
           listenSocket->Run();
-        }
-        catch (std::exception &e) {
+        } catch (std::exception &e) {
           std::cout << " cannot listen " << e.what() << std::endl;
         }
+        
       }
+      
       std::cout << "end thread" << std::endl;
+	  
     });
+  
   listenThread.detach();
   return true;
+  
 }
 
 void OSCReceiver::ProcessMessage(const osc::ReceivedMessage &m, const IpEndpointName &remoteEndpoint){
@@ -58,7 +72,9 @@ void OSCReceiver::ProcessMessage(const osc::ReceivedMessage &m, const IpEndpoint
 
 
   try{
+	  
     for (::osc::ReceivedMessage::const_iterator arg = m.ArgumentsBegin(); arg != m.ArgumentsEnd(); ++arg){
+		
       if(arg->IsInt32()) {
         msg->addIntArg(arg->AsInt32Unchecked());
       }
@@ -68,9 +84,12 @@ void OSCReceiver::ProcessMessage(const osc::ReceivedMessage &m, const IpEndpoint
       else if (arg->IsString()) {
         msg->addStringArg(arg->AsStringUnchecked());
       }
+      
     }
+    
     messages.push_back(msg);
-  }catch( osc::Exception& e ){
+	
+  } catch( osc::Exception& e ){
     // any parsing errors such as unexpected argument types, or
     // missing arguments get thrown as exceptions.
     std::cout << "error while parsing message: "
@@ -80,7 +99,6 @@ void OSCReceiver::ProcessMessage(const osc::ReceivedMessage &m, const IpEndpoint
 
 bool OSCReceiver::hasWaitingMessages(){
   int queue_length = (int)messages.size();
-
   return queue_length > 0;
 }
 
@@ -97,6 +115,9 @@ bool OSCReceiver::getNextMessage(gdOscMessage* message){
 }
 
 void OSCReceiver::stop() {
-  delete listenSocket;
-  listenSocket = NULL;
+	if (listenSocket) {
+		delete listenSocket;
+		listenSocket = 0;
+		listenThread.join();
+	}
 }
