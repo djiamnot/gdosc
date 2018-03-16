@@ -1,0 +1,37 @@
+#N canvas 900 112 539 587 10;
+#X obj 132 35 bng 50 250 50 0 empty empty start 17 7 0 10 -4034 -1
+-1;
+#X obj 184 35 loadbang;
+#X obj 273 212 r oscmsg;
+#X obj 273 234 packOSC;
+#X obj 235 390 udpsend;
+#X obj 132 101 t b b;
+#X obj 38 200 metro 20;
+#X obj 38 222 random 10000;
+#X msg 38 244 send /pd \$1;
+#X obj 38 266 s oscmsg;
+#X obj 315 390 udpsend;
+#X obj 352 35 bng 50 250 50 0 empty empty stop 17 7 0 10 -258113 -1
+-1;
+#X msg 386 197 disconnect;
+#X msg 85 176 stop;
+#X msg 213 161 connect 127.0.0.1 23000;
+#X msg 281 134 connect 127.0.0.1 23001;
+#X connect 0 0 5 0;
+#X connect 1 0 5 0;
+#X connect 2 0 3 0;
+#X connect 3 0 4 0;
+#X connect 3 0 10 0;
+#X connect 5 0 6 0;
+#X connect 5 1 14 0;
+#X connect 5 1 15 0;
+#X connect 6 0 7 0;
+#X connect 7 0 8 0;
+#X connect 8 0 9 0;
+#X connect 11 0 12 0;
+#X connect 11 0 13 0;
+#X connect 12 0 10 0;
+#X connect 12 0 4 0;
+#X connect 13 0 6 0;
+#X connect 14 0 4 0;
+#X connect 15 0 10 0;
