@@ -108,6 +108,80 @@ func _on_osc_message(val):
             translate(Vector3(val[2], val[3], val[4]))
 ```
 
+### Message reception with OSCreceiver
+
+First step is to add an *OSCreceiver* to your scene and configure it.
+
+* **Port**: number of the socket receiving messages
+* **Max Queue**: maximum number of messages to keep in memory - can be seen as the maximum number of messages that might be received between 2 frames
+* **Autostart**: set this to true to start the reception as soon as the scene starts
+
+Once done, you have two options to use the received messages.
+
+#### parsing messages at each *_process*
+
+To do so, append a script to your *OSCreceiver*.
+
+```python
+extends OSCreceiver
+
+func _process(delta):
+	while( has_waiting_messages() ):
+		var msg = get_next_message()
+		# the osc message is ready to be used at this point
+		print( msg )
+
+func _ready():
+	set_process(true)
+	pass
+```
+
+#### using *signals*
+
+At each received message, *OSCreceiver* fires an **osc_message_received** signal.
+
+To broadcast this signal, you have to connect it to *func* of other objects. Let say that your scene is structured as follows:
+
+* *root*
+* * *OSCreceiver*
+* * *MeshObject*, with a script containing a func **parse_osc(msg)**
+* * *TextEdit*, with a script containing a func **dump_osc(msg)**
+
+To send osc messages to *MeshObject* and *TextEdit*, attach a script to *OSCreceiver*:
+
+```python
+extends OSCreceiver
+
+func _ready():
+	connect( "osc_message_received", get_parent().get_node( "TextEdit"), "dump_osc" )
+	connect( "osc_message_received", get_parent().get_node( "MeshObject"), "parse_osc" )
+	pass
+```
+
+#### structure of an OSC message in gdscript
+
+The object returned by *OSCreceiver* is a Dictionary.
+
+Here are its keys:
+
+* ["valid"] : if false, do not try to access the other keys!;
+* ["ip"] : IP of the sender;
+* ["port"] : port of the sender;
+* ["address"] : the address of the message, looking like "/smthng/else";
+* ["typetag"] : a list of characters specifying the type of each arguments received;
+* ["data"] : an array of arguments, casted following the typetag.
+
+Example of script using a message:
+
+```python
+func parse_osc( msg ):
+	if ( !msg["valid"] ):
+		return
+	if ( !msg["address"] == "/pm/pos" ):
+		return
+	received_pos = Vector3( msg["data"][0],msg["data"][1],msg["data"][2])
+```
+
 ### Sending messages
 
 First of all, you need to add an **OSCtransmitter** node in your scene. It is located in the first level of the tree, between *HTTPRequest* and *ResourcePreloader*.
