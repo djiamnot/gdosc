@@ -11,25 +11,31 @@
 #define _SENDERH_
 
 struct gdOscSenderSettings {
-  std::string host = "localhost";
-  int port = 0;
+    std::string host = "localhost";
+    int port = 0;
+    int buffersize = 327680;
 };
 
-class gdOscSender{
- public:
-  gdOscSender(){};
-  bool init(std::string host, int port);
-  bool setup(gdOscSenderSettings &settings);
-  void clear();
+class gdOscSender {
+public:
 
-  void sendMessage(gdOscMessage &message);
-  void appendMessage(gdOscMessage &message, osc::OutboundPacketStream &p);
+    gdOscSender() {};
 
+    bool init(std::string host, int port, int buffersize);
 
- private:
-  gdOscSenderSettings settings;
+    bool setup(gdOscSenderSettings &settings);
 
-  std::unique_ptr<UdpTransmitSocket> sendSocket;
+    void clear();
+
+    void sendMessage(gdOscMessage &message);
+
+    void appendMessage(gdOscMessage &message, osc::OutboundPacketStream &p);
+
+private:
+    
+    gdOscSenderSettings settings;
+
+    std::unique_ptr<UdpTransmitSocket> sendSocket;
 };
 
 #endif

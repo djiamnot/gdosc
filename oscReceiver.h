@@ -27,13 +27,15 @@ class OSCReceiver : public ::osc::OscPacketListener {
 
  public:
   OSCReceiver(int port);
+  ~OSCReceiver();
   bool hasWaitingMessages();
   bool getNextMessage(gdOscMessage*);
-  bool setup(int port);
+  //   bool setup(int port);
+  
+  bool start();
 
  protected:
-
-  bool start();
+	 
   void stop();
   virtual void ProcessMessage(const osc::ReceivedMessage &m, const IpEndpointName &remoteEndpoint);
 

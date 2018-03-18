@@ -3,12 +3,40 @@ This is a Godot game engine module for receiving and sending Open Sound Control 
 It uses oscpack as OSC protocol implementation so it potentially it works on all platforms that can handle oscpack. However it has been tested only on Linux (and, for the moment, I am not interested in any other platforms).
 
 ## Installation
+
 ### Godot engine
 First, you will need the Godot engine sources. Head over to [Godot compilation instructions](http://docs.godotengine.org/en/latest/development/compiling/) to get Godot building on your system (make sure it can build with `use_llvm=yes`).
 
 Then copy or link `gdosc` to `godot/modules` and recompile Godot with `scons platform=x11 use_llvm=yes`
 
+### deps
+
+#### linux
+
+If you wants to use clang, install it with:
+
+`sudo apt install clang`
+
+If you are using gcc, just skip the *use_llvm=yes* and it will be ok.
+
+#### git
+
+If you are not familiar with git, make sure it is installed:
+
+`sudo apt install git`
+
+Generate SSH key by following this [tutorial](https://www.siteground.com/kb/generate_ssh_key_in_linux/) and add it to your [github](https://help.github.com/articles/adding-a-new-ssh-key-to-your-github-account/) account - HTTPS links are not working with submodules!
+
+Once done, use these 2 commands to get the repo up & running:
+
+`git clone git@github.com:djiamnot/gdosc.git`
+
+`git pull && git submodule init && git submodule update && git submodule status`
+
+It will retrieve *oscpack* submodule.
+
 ### gdosc
+
 Then, in your sources directory `git clone --recurse-submodules https://github.com/djiamnot/gdosc` and after that:
 
 `cd godot`
@@ -80,33 +108,109 @@ func _on_osc_message(val):
             translate(Vector3(val[2], val[3], val[4]))
 ```
 
-And here's an approach for sending:
+### Message reception with OSCreceiver
+
+First step is to add an *OSCreceiver* to your scene and configure it.
+
+* **Port**: number of the socket receiving messages
+* **Max Queue**: maximum number of messages to keep in memory - can be seen as the maximum number of messages that might be received between 2 frames
+* **Autostart**: set this to true to start the reception as soon as the scene starts
+
+Once done, you have two options to use the received messages.
+
+#### parsing messages at each *_process*
+
+To do so, append a script to your *OSCreceiver*.
+
+```python
+extends OSCreceiver
+
+func _process(delta):
+	while( has_waiting_messages() ):
+		var msg = get_next_message()
+		# the osc message is ready to be used at this point
+		print( msg )
+
+func _ready():
+	set_process(true)
+	pass
+```
+
+#### using *signals*
+
+At each received message, *OSCreceiver* fires an **osc_message_received** signal.
+
+To broadcast this signal, you have to connect it to *func* of other objects. Let say that your scene is structured as follows:
+
+* *root*
+* * *OSCreceiver*
+* * *MeshObject*, with a script containing a func **parse_osc(msg)**
+* * *TextEdit*, with a script containing a func **dump_osc(msg)**
+
+To send osc messages to *MeshObject* and *TextEdit*, attach a script to *OSCreceiver*:
+
+```python
+extends OSCreceiver
+
+func _ready():
+	connect( "osc_message_received", get_parent().get_node( "TextEdit"), "dump_osc" )
+	connect( "osc_message_received", get_parent().get_node( "MeshObject"), "parse_osc" )
+	pass
+```
+
+#### structure of an OSC message in gdscript
+
+The object returned by *OSCreceiver* is a Dictionary.
+
+Here are its keys:
+
+* ["valid"] : if false, do not try to access the other keys!;
+* ["ip"] : IP of the sender;
+* ["port"] : port of the sender;
+* ["address"] : the address of the message, looking like "/smthng/else";
+* ["typetag"] : a list of characters specifying the type of each arguments received;
+* ["data"] : an array of arguments, casted following the typetag.
+
+Example of script using a message:
+
+```python
+func parse_osc( msg ):
+	if ( !msg["valid"] ):
+		return
+	if ( !msg["address"] == "/pm/pos" ):
+		return
+	received_pos = Vector3( msg["data"][0],msg["data"][1],msg["data"][2])
+```
+
+### Sending messages
+
+First of all, you need to add an **OSCtransmitter** node in your scene. It is located in the first level of the tree, between *HTTPRequest* and *ResourcePreloader*.
+
+![OSCtransmitter in creation menu](https://frankiezafe.org/images/7/7c/Godot_gdosc_OSCtransmitter.png)
+
+Once done, attach a script to it that looks like this:
 
 ```python
 extends OSCtransmitter
 
-var new_sender = OSCtransmitter.new()
-var parent
-
 signal exit()
 
 func _ready():
-    set_process(true)
-    parent = get_parent()
-	# set the destination address and port
-    new_sender.init("localhost", 9020)
+	set_process(true)
+	# initialisation of OSC sender, on port 25000 and with a buffer size of 1024
+	init("localhost", 25000, 1024)
+	framecount = 0
+	pass
 
 func _process(delta):
-	# build the message
-	# OSC address
-    new_sender.setAddress("/update")
-	# some other parameters that we want to include
-    new_sender.appendString(parent.get_name())
-    new_sender.appendFloat(parent.translation.x)
-    new_sender.appendFloat(parent.translation.y)
-    new_sender.appendFloat(parent.translation.z)
-	# actually send the message
-    new_sender.sendMessage()
-	# reset the queue
-    new_sender.reset()
+	# creation of the new message
+	setAddress("/update")
+	# appending data
+	appendInt(framecount)
+	# sending the message to the client
+	sendMessage()
+	# cleanup of the message
+	reset()
+	framecount += 1
+	pass
 ```
