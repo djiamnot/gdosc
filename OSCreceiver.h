@@ -33,10 +33,10 @@ public:
 	
 	bool start();
 	void stop();
-	
-	bool hasWaitingMessages();
-	bool getNextMessage(gdOscMessage*);
-	
+		
+	bool has_waiting_messages();
+	Dictionary get_next_message();
+
 	// setters
 	void set_max_queue( int max_queue );
 	void set_autostart( bool autostart );
@@ -49,6 +49,7 @@ public:
 protected:
 	
 	void ProcessMessage(const osc::ReceivedMessage &m, const IpEndpointName &remoteEndpoint);
+	const Dictionary& add_gd_message( gdOscMessage* msg );
 	void _notification(int p_what);
 	static void _bind_methods();
 	
@@ -61,7 +62,8 @@ private:
 	std::size_t _max_queue;
 	bool _autostart;
 	
-	std::deque<gdOscMessage*> _msg_queue;
+	std::deque<Dictionary> _dict_queue;
+	
 	
 	void check_queue();
 	

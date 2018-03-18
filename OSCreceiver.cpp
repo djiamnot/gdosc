@@ -17,6 +17,7 @@ void OSCreceiver::stop() {
 		delete _lsocket;
 		_lsocket = 0;
 		_lthread.join();
+		_dict_queue.clear();
 	}
 }
 
@@ -46,6 +47,7 @@ bool OSCreceiver::start() {
 		while(_lsocket) {			
 			try {
 				_lsocket->Run();
+				std::cout << "_lsocket->Run()" << std::endl;
 			} catch (std::exception &e) {
 				std::cout << " cannot listen " << e.what() << std::endl;
 			}
@@ -63,10 +65,13 @@ void OSCreceiver::ProcessMessage(const osc::ReceivedMessage &m, const IpEndpoint
 	
 	gdOscMessage* msg = new gdOscMessage();
 	msg->setAddress(m.AddressPattern());
+	msg->setTypetag(m.TypeTags());
 	char endpointHost[IpEndpointName::ADDRESS_STRING_LENGTH];
 	remoteEndpoint.AddressAsString(endpointHost);
 	msg->setRemoteEndpoint(endpointHost, remoteEndpoint.port);
+	
 	try{
+		
 		for (::osc::ReceivedMessage::const_iterator arg = m.ArgumentsBegin(); arg != m.ArgumentsEnd(); ++arg){
 			if(arg->IsInt32()) {
 				msg->addIntArg(arg->AsInt32Unchecked());
@@ -78,36 +83,76 @@ void OSCreceiver::ProcessMessage(const osc::ReceivedMessage &m, const IpEndpoint
 				msg->addStringArg(arg->AsStringUnchecked());
 			}
 		}
-		std::cout << "OSCreceiver::ProcessMessage " << m.AddressPattern() << " / " << _msg_queue.size() << std::endl;
-		_msg_queue.push_back(msg);
+		
+		emit_signal( "osc_message_received", add_gd_message( msg ) );
+		
 		check_queue();
+		
 	} catch( osc::Exception& e ){
+		
 		// any parsing errors such as unexpected argument types, or
 		// missing arguments get thrown as exceptions.
 		std::cout << "error while parsing message: "
 		<< m.AddressPattern() << ": " << e.what() << "\n";
+		
 	}
 	
 }
 
-bool OSCreceiver::hasWaitingMessages(){
+const Dictionary& OSCreceiver::add_gd_message( gdOscMessage* msg ) {
 	
-	return !_msg_queue.empty();
+	Dictionary d;
+
+	d["valid"] = true;
+	d["ip"] = String(msg->getRemoteIp().c_str());
+	d["port"] = msg->getRemotePort();
+	d["address"] = String(msg->getAddress().c_str());
+	d["typetag"] = String(msg->getTypetag().c_str());
+	Array a;
+	
+	for(int i =0; i < msg->getNumArgs(); i++){
+		switch(msg->getArgType(i)) {
+			case TYPE_INT32:
+				a.append(msg->getArgAsInt32(i));
+				break;
+			case TYPE_FLOAT:
+				a.append(msg->getArgAsFloat(i));
+				break;
+			case TYPE_STRING:
+				a.append(msg->getArgAsString(i).c_str());
+				break;
+			default:
+				a.append("UNKNOWN");
+				break;
+		}
+	}
+	
+	d["data"] = a;
+	
+	_dict_queue.push_back(d);
+	
+	return _dict_queue[_dict_queue.size()-1];
+
+}
+
+bool OSCreceiver::has_waiting_messages(){
+	
+	//return !_msg_queue.empty();
+	return !_dict_queue.empty();
 	
 }
 
-bool OSCreceiver::getNextMessage(gdOscMessage* message){
+Dictionary OSCreceiver::get_next_message() {
 	
-	if (_msg_queue.size() == 0) {
-		return false;
+	Dictionary d;
+	d["valid"] = false;
+	
+	if (_dict_queue.size() > 0) {
+		d = _dict_queue.front();
+		_dict_queue.pop_front();
 	}
 	
-	gdOscMessage* src_message = _msg_queue.front();
-	message->copy(*src_message);
-	delete src_message;
-	_msg_queue.pop_front();
-	
-	return true;
+	return d;
 	
 }
 
@@ -116,8 +161,8 @@ void OSCreceiver::set_autostart( bool autostart ) {
 }
 
 void OSCreceiver::check_queue() {
-	if ( _msg_queue.size() > _max_queue ) {
-		_msg_queue.resize( _max_queue );
+	if ( _dict_queue.size() > _max_queue ) {
+		_dict_queue.resize( _max_queue );
 	}
 }
 
@@ -153,8 +198,11 @@ void OSCreceiver::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("get_port"), &OSCreceiver::get_port);
 	ClassDB::bind_method(D_METHOD("get_max_queue"), &OSCreceiver::get_max_queue);
 	ClassDB::bind_method(D_METHOD("get_autostart"), &OSCreceiver::get_autostart);
-	//ADD_SIGNAL(MethodInfo("osc_message"));
-	//ADD_SIGNAL(MethodInfo("osc_listener_ready"));
+	ClassDB::bind_method(D_METHOD("has_waiting_messages"), &OSCreceiver::has_waiting_messages);
+	ClassDB::bind_method(D_METHOD("get_next_message"), &OSCreceiver::get_next_message);
+	
+	ADD_SIGNAL(MethodInfo("osc_message_received"));
+
 	ADD_GROUP("Network", "");
 	ADD_PROPERTYNO(PropertyInfo(Variant::INT, "port", PROPERTY_HINT_RANGE, "1,99999,1"), "init", "get_port");
 	ADD_PROPERTYNZ(PropertyInfo(Variant::INT, "max_queue", PROPERTY_HINT_RANGE, "1,1024,1"), "set_max_queue", "get_max_queue");
