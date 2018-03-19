@@ -4,8 +4,13 @@ OSCreceiver::OSCreceiver():
 _lsocket(0),
 _port(23000),
 _max_queue(100),
-_autostart(true)
+_autostart(true),
+_native_mode(false)
 {
+	Ref<OSCmessage> rom0 = memnew(OSCmessage);
+	_gd_signal_msg = rom0;
+	Ref<OSCmessage> rom1 = memnew(OSCmessage);
+	_gd_next_msg = rom1;
 }
 
 OSCreceiver::~OSCreceiver() {
@@ -13,12 +18,27 @@ OSCreceiver::~OSCreceiver() {
 }
 
 void OSCreceiver::stop() {
+	
 	if (_lsocket) {
 		delete _lsocket;
 		_lsocket = 0;
-		_lthread.join();
-		_dict_queue.clear();
 	}
+	_msg_queue.clear();
+	_gd_queue.clear();
+	
+}
+
+void OSCreceiver::native_mode( bool enable ) {
+	
+	if ( _native_mode != enable ) {
+		if (enable && !_gd_queue.empty() ) {
+			_gd_queue.clear();
+		} else if (!enable && !_msg_queue.empty() ) {
+			_msg_queue.clear();
+		}
+		_native_mode = enable;
+	}
+	
 }
 
 bool OSCreceiver::init(int port) {
@@ -47,7 +67,6 @@ bool OSCreceiver::start() {
 		while(_lsocket) {			
 			try {
 				_lsocket->Run();
-				std::cout << "_lsocket->Run()" << std::endl;
 			} catch (std::exception &e) {
 				std::cout << " cannot listen " << e.what() << std::endl;
 			}
@@ -63,28 +82,43 @@ bool OSCreceiver::start() {
 
 void OSCreceiver::ProcessMessage(const osc::ReceivedMessage &m, const IpEndpointName &remoteEndpoint){
 	
-	gdOscMessage* msg = new gdOscMessage();
-	msg->setAddress(m.AddressPattern());
-	msg->setTypetag(m.TypeTags());
+	if (!_native_mode) {
+		
+		OSCmessage gdm( m, remoteEndpoint );
+
+		if ( gdm.is_valid() ) {
+			_gd_queue.push_back( gdm );
+			_gd_signal_msg->copy( gdm );
+			emit_signal( "osc_message_received", _gd_signal_msg );
+			check_queue();
+		}
+		
+		return;
+		
+	}
+	
+	gdOscMessage msg ;
+	msg.setAddress(m.AddressPattern());
+	msg.setTypetag(m.TypeTags());
 	char endpointHost[IpEndpointName::ADDRESS_STRING_LENGTH];
 	remoteEndpoint.AddressAsString(endpointHost);
-	msg->setRemoteEndpoint(endpointHost, remoteEndpoint.port);
+	msg.setRemoteEndpoint(endpointHost, remoteEndpoint.port);
 	
 	try{
 		
 		for (::osc::ReceivedMessage::const_iterator arg = m.ArgumentsBegin(); arg != m.ArgumentsEnd(); ++arg){
 			if(arg->IsInt32()) {
-				msg->addIntArg(arg->AsInt32Unchecked());
+				msg.addIntArg(arg->AsInt32Unchecked());
 			}
 			else if (arg->IsFloat()){
-				msg->addFloatArg(arg->AsFloatUnchecked());
+				msg.addFloatArg(arg->AsFloatUnchecked());
 			}
 			else if (arg->IsString()) {
-				msg->addStringArg(arg->AsStringUnchecked());
+				msg.addStringArg(arg->AsStringUnchecked());
 			}
 		}
-		
-		emit_signal( "osc_message_received", add_gd_message( msg ) );
+			
+		_msg_queue.push_back( msg );
 		
 		check_queue();
 		
@@ -99,80 +133,65 @@ void OSCreceiver::ProcessMessage(const osc::ReceivedMessage &m, const IpEndpoint
 	
 }
 
-const Dictionary& OSCreceiver::add_gd_message( gdOscMessage* msg ) {
-	
-	Dictionary d;
-
-	d["valid"] = true;
-	d["ip"] = String(msg->getRemoteIp().c_str());
-	d["port"] = msg->getRemotePort();
-	d["address"] = String(msg->getAddress().c_str());
-	d["typetag"] = String(msg->getTypetag().c_str());
-	Array a;
-	
-	for(int i =0; i < msg->getNumArgs(); i++){
-		switch(msg->getArgType(i)) {
-			case TYPE_INT32:
-				a.append(msg->getArgAsInt32(i));
-				break;
-			case TYPE_FLOAT:
-				a.append(msg->getArgAsFloat(i));
-				break;
-			case TYPE_STRING:
-				a.append(msg->getArgAsString(i).c_str());
-				break;
-			default:
-				a.append("UNKNOWN");
-				break;
-		}
-	}
-	
-	d["data"] = a;
-	
-	_dict_queue.push_back(d);
-	
-	return _dict_queue[_dict_queue.size()-1];
-
-}
-
 bool OSCreceiver::has_waiting_messages(){
 	
-	//return !_msg_queue.empty();
-	return !_dict_queue.empty();
+	if ( !_native_mode ) return !_gd_queue.empty();
+	return !_msg_queue.empty();
 	
 }
 
-Dictionary OSCreceiver::get_next_message() {
+Ref<OSCmessage> OSCreceiver::get_next_message() {
 	
-	Dictionary d;
-	d["valid"] = false;
 	
-	if (_dict_queue.size() > 0) {
-		d = _dict_queue.front();
-		_dict_queue.pop_front();
+	if ( _native_mode || _gd_queue.empty()) {
+		return Ref<OSCmessage>( nullptr );
 	}
 	
-	return d;
+	_gd_next_msg->copy( _gd_queue.front() );
+	_gd_queue.pop_front();
+	
+	return _gd_next_msg;
+	
+}
+
+bool OSCreceiver::getNextMessage( gdOscMessage& msg ) {
+	
+	if ( !_native_mode || _msg_queue.empty() ) return false;
+	
+	const gdOscMessage& m = _msg_queue.front();
+	msg.copy( m );
+	_msg_queue.pop_front();
+	
+	return true;
 	
 }
 
 void OSCreceiver::set_autostart( bool autostart ) {
+	
 	_autostart = autostart;
+	
 }
 
 void OSCreceiver::check_queue() {
-	if ( _dict_queue.size() > _max_queue ) {
-		_dict_queue.resize( _max_queue );
+	
+	if ( !_native_mode && _gd_queue.size() > _max_queue ) {
+		_gd_queue.resize( _max_queue );
+	} else if ( _native_mode && _msg_queue.size() > _max_queue ) {
+		_msg_queue.resize( _max_queue );
 	}
+	
 }
 
 void OSCreceiver::set_max_queue( int max_queue ) {
+	
 	if ( max_queue < 1 ) return;
 	_max_queue = (std::size_t) max_queue;
 	check_queue();
+	
 }
 
 void OSCreceiver::_notification(int p_what) {
+	
 	switch (p_what) {
 		case MainLoop::NOTIFICATION_WM_QUIT_REQUEST: {
 			std::cout << "OSCreceiver::_notification, stopping reception" << std::endl;
@@ -187,9 +206,11 @@ void OSCreceiver::_notification(int p_what) {
 		
 	}
 	//std::cout << p_what << std::endl;
+	
 }
 
 void OSCreceiver::_bind_methods() {
+	
 	ClassDB::bind_method(D_METHOD("init", "port"), &OSCreceiver::init);
 	ClassDB::bind_method(D_METHOD("start"), &OSCreceiver::start);
 	ClassDB::bind_method(D_METHOD("stop"), &OSCreceiver::stop);
@@ -207,4 +228,5 @@ void OSCreceiver::_bind_methods() {
 	ADD_PROPERTYNO(PropertyInfo(Variant::INT, "port", PROPERTY_HINT_RANGE, "1,99999,1"), "init", "get_port");
 	ADD_PROPERTYNZ(PropertyInfo(Variant::INT, "max_queue", PROPERTY_HINT_RANGE, "1,1024,1"), "set_max_queue", "get_max_queue");
 	ADD_PROPERTYNZ(PropertyInfo(Variant::BOOL, "autostart"), "set_autostart", "get_autostart");
+	
 }
