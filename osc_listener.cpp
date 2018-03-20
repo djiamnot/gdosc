@@ -1,37 +1,56 @@
 #include "osc_listener.h"
 
-OSCListener::OSCListener() {
-  _port = 18002;
-  try {
-  osc_rcv = new OSCReceiver(_port);
-  std::cout << "OSC listener port: " << _port << std::endl;
-  start();
-  emit_signal("osc_listener_ready");
-  }
-  catch (const std::exception& e) {
-    std::cout << "Constructor tried to instantiate OSCReceiver but " << e.what() << std::endl;
-  }
+OSCListener::OSCListener():
+osc_rcv(0),
+_running(false),
+_dump(false)
+{
+//   _port = 18002;
+//   try {
+//   osc_rcv = new OSCReceiver(_port);
+//   std::cout << "OSC listener port: " << _port << std::endl;
+//   start();
+//   emit_signal("osc_listener_ready");
+//   }
+//   catch (const std::exception& e) {
+//     std::cout << "Constructor tried to instantiate OSCReceiver but " << e.what() << std::endl;
+//   }
 }
 
 OSCListener::~OSCListener() {
+  purge();
+}
+
+void OSCListener::purge() {
+  stop();
   if(osc_rcv) {
     delete osc_rcv;
   }
 }
 
-void OSCListener::set_port(int port) {
-  delete osc_rcv;
-  _port = port;
-  osc_rcv = new OSCReceiver(_port);
+void OSCListener::stop() {
+  if (_running ) {
+    _running = false;
+    listener.join();
+  }
 }
+
+// void OSCListener::setPort(int port) {
+//   delete osc_rcv;
+//   _port = port;
+//   osc_rcv = new OSCReceiver(_port);
+// }
 
 bool OSCListener::setup(int port) {
   _port = port;
+  purge();
+  osc_rcv = new OSCReceiver(_port);
   try {
-    osc_rcv->setup(_port);
+// 	  osc_rcv->setup(_port);
+	  osc_rcv->start();
+	  start();
     std::cout << "setting port: " << _port << std::endl;
-  }
-  catch (const std::exception& e) {
+  } catch (const std::exception& e) {
     std::cout << "listener.setup failed: " << e.what() << std::endl;
   }
 }
@@ -39,13 +58,14 @@ bool OSCListener::setup(int port) {
 bool OSCListener::start() {
   listener = std::thread([this]{
       try {
-        get_msg();
+        getMessage();
       }
       catch (const std::exception& e) {
         std::cout << "cannot get message: " << e.what() << std::endl;
       }
     });
   listener.detach();
+  _running = true;
   return true;
 }
 
@@ -92,32 +112,27 @@ Array OSCListener::getOscMessageAsArray(gdOscMessage m) {
   return a;
 }
 
-Array OSCListener::get_msg(){
-  while(true){
+Array OSCListener::getMessage(){
+  while(_running){
     if(osc_rcv->hasWaitingMessages()){
       gdOscMessage message;
       osc_rcv->getNextMessage(&message);
       msg = getOscMessageAsArray(message);
+	  if ( _dump ) std::cout << getOscMsgAsString(message).c_str() <<std::endl;
       emit_signal("osc_message", msg);
-      }
+    } else {
+		if ( _dump ) std::cout << "nothing on " << _port <<  ", maybe next time..." << std::endl;
+		std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+	}
   }
 }
 
-bool OSCListener::active(bool a){
-  // TODO: activate/desactivate OSC listening
-}
-
 void OSCListener::_bind_methods() {
-
-  // methods
   ClassDB::bind_method(D_METHOD("setup", "port"), &OSCListener::setup);
-  ClassDB::bind_method(D_METHOD("set_port", "port"), &OSCListener::set_port);
-  ClassDB::bind_method(D_METHOD("get_port"), &OSCListener::get_port);
-  ClassDB::bind_method(D_METHOD("get_msg"), &OSCListener::get_msg);
-
-  // Properties
-
-  // signals
-  ADD_SIGNAL(MethodInfo("osc_message"));
-  ADD_SIGNAL(MethodInfo("osc_listener_ready"));
+  //ClassDB::bind_method(D_METHOD("setPort", "port"), &OSCListener::setPort);
+  ClassDB::bind_method(D_METHOD("getPort"), &OSCListener::getPort);
+  ClassDB::bind_method(D_METHOD("getMessage"), &OSCListener::getMessage);
+  ClassDB::bind_method(D_METHOD("dump"), &OSCListener::dump);
+   ADD_SIGNAL(MethodInfo("osc_message"));
+   ADD_SIGNAL(MethodInfo("osc_listener_ready"));
 }

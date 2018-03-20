@@ -1,15 +1,17 @@
 /* register_types.cpp */
 
 #include "register_types.h"
-// #include "object_type_db.h"
 #include "osc_transmitter.h"
 #include "osc_listener.h"
 
-void register_gdosc_types() {
+#include "OSCreceiver.h"
 
+void register_gdosc_types() {
   //ObjectTypeDB::register_type<OSCtransmitter>();
   ClassDB::register_class<OSCtransmitter>();
   ClassDB::register_class<OSCListener>();
+  // new classes
+  ClassDB::register_class<OSCreceiver>();
 }
 
 void unregister_gdosc_types() {

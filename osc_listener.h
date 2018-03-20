@@ -5,7 +5,7 @@
 #include <cstdlib>
 #include <thread>
 
-#include "scene/3d/spatial.h"
+#include "scene/main/node.h"
 #include "print_string.h"
 #include "core/array.h"
 #include "core/variant.h"
@@ -25,29 +25,44 @@
 #define GDOSCL_H
 
 
-class OSCListener : public Spatial {
-  GDCLASS(OSCListener, Spatial);
+class OSCListener : public Node {
+  GDCLASS(OSCListener, Node);
 
  public:
   OSCListener();
   ~OSCListener();
+  
   bool setup(int port);
+  void stop();
+  
   String getOscMsgAsString(gdOscMessage m);
   Array getOscMessageAsArray(gdOscMessage m);
-  void set_port(int port);
-  int get_port () { return _port;}
-  Array get_msg();
-  bool active(bool a);
+  //void setPort(int port);
+  int getPort () { return _port;}
+  Array getMessage();
+  
+  void dump( const bool& b ) {
+	  _dump = b;
+	}
 
  protected:
   static void _bind_methods();
   std::thread listener;
+  bool _running;
 
  private:
   bool start();
+  
+  /*Hard cleanup: stops the thread and delete the receiver.
+   Used in destructor.
+   */
+  void purge();
+  
   OSCReceiver* osc_rcv;
   int _port;
   Array msg;
+  
+  bool _dump;
 
 };
 #endif
