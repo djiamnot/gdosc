@@ -39,7 +39,7 @@ class gdOscMessage {
   int32_t getArgAsInt32(int index, bool typeConvert = false) const;
   float getArgAsFloat(int index, bool typeConvert = false) const;
   std::string getArgAsString(int index, bool typeConvert = false) const;
-  int getNumArgs();
+  int getNumArgs() const;
 
   gdOscArgType getArgType(int index) const;
   std::string getArgTypeName(int index) const;

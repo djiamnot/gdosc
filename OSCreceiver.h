@@ -1,6 +1,7 @@
 #include "scene/main/node.h"
 #include "core/engine.h"
 #include "core/os/main_loop.h"
+#include "core/object.h"
 #include <cstdlib>
 #include <iostream>
 #include <memory>
@@ -15,6 +16,7 @@
 #include "ip/UdpSocket.h"
 #include "ip/PacketListener.h"
 #include "gdOscMessage.h"
+#include "OSCmessage.h"
 
 #ifndef GDOSC_RECEIVER_H
 #define GDOSC_RECEIVER_H
@@ -29,13 +31,24 @@ public:
 	
 	OSCreceiver();
 	~OSCreceiver();
-	bool init(int port);
 	
+	/* Set native mode to true to prevent the object to turn OSC messages to gd Dicitionaries. 
+	 * If set to true, use method getNextMessage( gdOscMessage& msg ) to retrieve messages.
+	 * @remark native_mode is set to false by default.
+	 */
+	void native_mode( bool enable );
+	
+	bool init(int port);
 	bool start();
 	void stop();
-		
+
 	bool has_waiting_messages();
-	Dictionary get_next_message();
+	Ref<OSCmessage> get_next_message();
+	
+	/* USe this method to retrieve messages in C++. It is not exposed in gdscript, and
+	 * will return false if native_mode is not set to true.
+	 */
+	bool getNextMessage( gdOscMessage& msg );
 
 	// setters
 	void set_max_queue( int max_queue );
@@ -49,7 +62,6 @@ public:
 protected:
 	
 	void ProcessMessage(const osc::ReceivedMessage &m, const IpEndpointName &remoteEndpoint);
-	const Dictionary& add_gd_message( gdOscMessage* msg );
 	void _notification(int p_what);
 	static void _bind_methods();
 	
@@ -62,7 +74,12 @@ private:
 	std::size_t _max_queue;
 	bool _autostart;
 	
-	std::deque<Dictionary> _dict_queue;
+	bool _native_mode;
+	std::deque<gdOscMessage> _msg_queue;
+	std::deque<OSCmessage> _gd_queue;
+	
+	Ref<OSCmessage> _gd_signal_msg;
+	Ref<OSCmessage> _gd_next_msg;
 	
 	
 	void check_queue();

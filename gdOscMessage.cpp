@@ -97,7 +97,7 @@ std::string gdOscMessage::getArgAsString( int index, bool typeConvert) const{
         return ((gdOscArgString*)args[index])->get();
 }
 
-int gdOscMessage::getNumArgs(){
+int gdOscMessage::getNumArgs() const {
   return args.size();
 }
 
