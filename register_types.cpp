@@ -5,6 +5,7 @@
 #include "osc_listener.h"
 
 #include "OSCreceiver.h"
+#include "OSCmessage.h"
 
 void register_gdosc_types() {
   //ObjectTypeDB::register_type<OSCtransmitter>();
@@ -12,6 +13,7 @@ void register_gdosc_types() {
   ClassDB::register_class<OSCListener>();
   // new classes
   ClassDB::register_class<OSCreceiver>();
+  ClassDB::register_class<OSCmessage>();
 }
 
 void unregister_gdosc_types() {

@@ -11,6 +11,10 @@ void gdOscMessage::setAddress(const std::string &address){
 	this->address = address;
 }
 
+void gdOscMessage::setTypetag(const std::string &typetag){
+	this->typetag = typetag;
+}
+
 //--------------------------------------------------------------
 std::string gdOscMessage::getAddress() const{
 	return address;
@@ -19,6 +23,11 @@ std::string gdOscMessage::getAddress() const{
 //--------------------------------------------------------------
 std::string gdOscMessage::getRemoteIp() const{
 	return remoteHost;
+}
+
+//--------------------------------------------------------------
+std::string gdOscMessage::getTypetag() const{
+	return typetag;
 }
 
 //--------------------------------------------------------------
@@ -88,7 +97,7 @@ std::string gdOscMessage::getArgAsString( int index, bool typeConvert) const{
         return ((gdOscArgString*)args[index])->get();
 }
 
-int gdOscMessage::getNumArgs(){
+int gdOscMessage::getNumArgs() const {
   return args.size();
 }
 
