@@ -53,7 +53,7 @@ At this time, gdosc supports only three data-types: _float_, _int_, and _string_
 
 Theoretically, this should work on any OS but it has been developed and tested on Linux with Godot3.0
 
-## Worlkflow
+## Worlkflow (old school)
 
 First you need to instantiate OSCListener class. In my current workflow, I attach a script to root node in the scene. OSCListener emits a signal `osdc_message` which you can pick up and do with what you want
 
@@ -108,9 +108,44 @@ func _on_osc_message(val):
             translate(Vector3(val[2], val[3], val[4]))
 ```
 
-### Message reception with OSCreceiver
+### Sending messages
 
-See [gdosc-demo](https://github.com/frankiezafe/gdosc-demo/commits/master) for an example on how to use this object.
+First of all, you need to add an **OSCtransmitter** node in your scene. It is located in the first level of the tree, between *HTTPRequest* and *ResourcePreloader*.
+
+![OSCtransmitter in creation menu](https://frankiezafe.org/images/7/7c/Godot_gdosc_OSCtransmitter.png)
+
+Once done, attach a script to it that looks like this:
+
+```python
+extends OSCtransmitter
+
+signal exit()
+
+func _ready():
+	set_process(true)
+	# initialisation of OSC sender, on port 25000 and with a buffer size of 1024
+	init("localhost", 25000, 1024)
+	framecount = 0
+	pass
+
+func _process(delta):
+	# creation of the new message
+	setAddress("/update")
+	# appending data
+	appendInt(framecount)
+	# sending the message to the client
+	sendMessage()
+	# cleanup of the message
+	reset()
+	framecount += 1
+	pass
+```
+
+## Worlkflow (new classes)
+
+See [gdosc-demo](https://github.com/frankiezafe/gdosc-demo/commits/master) for an example on how to use these objects.
+
+### OSCreceiver - reception of OSC message in godot
 
 First step is to add an *OSCreceiver* to your scene and configure it.
 
@@ -191,35 +226,79 @@ func parse_osc( msg ):
 	set_translation(received_pos)
 ```
 
-### Sending messages
+### OSCsender - emisson of OSC message from godot
 
-First of all, you need to add an **OSCtransmitter** node in your scene. It is located in the first level of the tree, between *HTTPRequest* and *ResourcePreloader*.
+First step is to add an *OSCsender* to your scene and configure it.
 
-![OSCtransmitter in creation menu](https://frankiezafe.org/images/7/7c/Godot_gdosc_OSCtransmitter.png)
+* **Ip**: IP address of the computer to send messages to, *127.0.0.1* by default;
+* **Port**: number of the socket to send messages to;
+* **Buffersize**: maximum size of the messages sent from this object, in bytes;
+* **Autostart**: set this to true to start the emission as soon as the scene starts;
+* **Autoclear**: set this to true to cleanup the messages automatically after each call to *msg_send()*.
 
-Once done, attach a script to it that looks like this:
+If *Autostart* is disabled, you will have to call *start()* from gdscript before starting the emission.
+
+If *Autoclear* is disabled, you will have call *msg_clear()* from gdscript. This can be usefull when the object is sending the same message continuously. In this case, configure the message once, then just call *msg_send()* to send it.
+
+#### Checking the status of the object
+
+You might need to test the status of the object from gdscript.
+
+* **init(String, int)**: stops the emission and verify the validity of the IP address and the port (equivalent to *is_ready()*);
+* **is_ready()**: returns true if the IP and the port are 'valid', meaning that the IP is nt an empty string and the port is above 0, this does not test the connection;
+* **is_started()**: returns true the socket has been successfully binded, message emission is enabled if true.
+
+#### Creating a message
+
+Good practice involves setting the address of the message before adding values in it. But it makes no difference if you do it in reverse order.
+
+List of methods available:
+
+* **msg_address(String)**: set the address of the message, a */* separated string, lokking like */some/thing*;
+* **msg_add_int(int)**: append an int to the message;
+* **msg_add_real(real)**: append an real (float or double) to the message;
+* **msg_add_string(String)**: append a String to the message;
+* **msg_add_v2(Vector2)**: append a Vector2 to the message, as a suite of real;
+* **msg_add_v3(Vector3)**: append a Vector3 to the message, as a suite of real;
+* **msg_add_quat(Quat)**: append a quaternion to the message, in W,X,Y,Z order;
+* **msg_add_transform(Transform)**: append a complete Transform to the message, the matrix3x3 first, followed by the position;
+* **msg_send()**: sends the message if the object is successfullt started;
+* **msg_clear()**: clear the content of the previous message (done automatically after *msg_send()* if *Autoclear* is enabled).
+
+Script sample:
 
 ```python
-extends OSCtransmitter
+extends OSCsender
 
-signal exit()
+var parent = null
+
+func _process(delta):
+	if (parent == null):
+		return
+	msg_address("/emitter/rot" )
+	msg_add_quat( Quat(parent.global_transform.basis) )
+	msg_send()
+	
+	msg_address("/emitter/pos" )
+	msg_add_v3( parent.global_transform.origin )
+	msg_send()
 
 func _ready():
 	set_process(true)
-	# initialisation of OSC sender, on port 25000 and with a buffer size of 1024
-	init("localhost", 25000, 1024)
-	framecount = 0
 	pass
+```
+
+The parent of this *OSCsender* register itself as the parent at startup:
+
+```python
+extends Spatial
 
 func _process(delta):
-	# creation of the new message
-	setAddress("/update")
-	# appending data
-	appendInt(framecount)
-	# sending the message to the client
-	sendMessage()
-	# cleanup of the message
-	reset()
-	framecount += 1
+	rotate_y( delta )
+	pass
+
+func _ready():
+	set_process(true)
+	get_node("OSCsender").parent = self
 	pass
 ```

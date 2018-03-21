@@ -286,17 +286,17 @@ void OSCreceiver::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_emit_signal", "emit_signal"), &OSCreceiver::set_emit_signal);
 	ClassDB::bind_method(D_METHOD("get_port"), &OSCreceiver::get_port);
 	ClassDB::bind_method(D_METHOD("get_max_queue"), &OSCreceiver::get_max_queue);
-	ClassDB::bind_method(D_METHOD("get_autostart"), &OSCreceiver::get_autostart);
-	ClassDB::bind_method(D_METHOD("get_emit_signal"), &OSCreceiver::get_emit_signal);
+	ClassDB::bind_method(D_METHOD("is_autostart"), &OSCreceiver::is_autostart);
+	ClassDB::bind_method(D_METHOD("is_emit_signal"), &OSCreceiver::is_emit_signal);
 	ClassDB::bind_method(D_METHOD("has_waiting_messages"), &OSCreceiver::has_waiting_messages);
 	ClassDB::bind_method(D_METHOD("get_next_message"), &OSCreceiver::get_next_message);
 	
 	ADD_SIGNAL(MethodInfo("osc_message_received"));
 
 	ADD_GROUP("Network", "");
-	ADD_PROPERTYNO(PropertyInfo(Variant::INT, "port", PROPERTY_HINT_RANGE, "1,99999,1"), "init", "get_port");
-	ADD_PROPERTYNZ(PropertyInfo(Variant::INT, "max_queue", PROPERTY_HINT_RANGE, "1,1024,1"), "set_max_queue", "get_max_queue");
-	ADD_PROPERTYNZ(PropertyInfo(Variant::BOOL, "autostart"), "set_autostart", "get_autostart");
-	ADD_PROPERTYNZ(PropertyInfo(Variant::BOOL, "emit_signal"), "set_emit_signal", "get_emit_signal");
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "port", PROPERTY_HINT_RANGE, "1,99999,1"), "init", "get_port");
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "max_queue", PROPERTY_HINT_RANGE, "1,1024,1"), "set_max_queue", "get_max_queue");
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "autostart"), "set_autostart", "is_autostart");
+	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "emit_signal"), "set_emit_signal", "is_emit_signal");
 	
 }
