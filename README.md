@@ -245,7 +245,7 @@ If *Autoclear* is disabled, you will have call *msg_clear()* from gdscript. This
 You might need to test the status of the object from gdscript.
 
 * **init(String, int)**: stops the emission and verify the validity of the IP address and the port (equivalent to *is_ready()*);
-* **is_ready()**: returns true if the IP and the port are 'valid', meaning that the IP is nt an empty string and the port is above 0, this does not test the connection;
+* **is_ready()**: returns true if the IP and the port are 'valid', meaning that the IP is not an empty string and the port is above 0, this does not test the connection;
 * **is_started()**: returns true the socket has been successfully binded, message emission is enabled if true.
 
 #### Creating a message
@@ -254,7 +254,7 @@ Good practice involves setting the address of the message before adding values i
 
 List of methods available:
 
-* **msg_address(String)**: set the address of the message, a */* separated string, lokking like */some/thing*;
+* **msg_address(String)**: set the address of the message, a */* separated string, looking like */some/thing*;
 * **msg_add_int(int)**: append an int to the message;
 * **msg_add_real(real)**: append an real (float or double) to the message;
 * **msg_add_string(String)**: append a String to the message;
