@@ -10,6 +10,7 @@
 #include <cstdlib>
 #include <deque>
 #include <thread>
+#include <mutex>
 #include "osc/OscReceivedElements.h"
 #include "osc/OscPrintReceivedElements.h"
 #include "osc/OscPacketListener.h"
@@ -53,11 +54,13 @@ public:
 	// setters
 	void set_max_queue( int max_queue );
 	void set_autostart( bool autostart );
+	void set_emit_signal( bool emit_signal );
 	
 	// getters
-	const int& get_port() const { return _port; }
-	int get_max_queue() const { return (int)_max_queue; }
-	const bool& get_autostart() const { return _autostart; }
+	_FORCE_INLINE_ const int& get_port() const { return _port; }
+	_FORCE_INLINE_ int get_max_queue() const { return (int)_max_queue; }
+	_FORCE_INLINE_ const bool& is_autostart() const { return _autostart; }
+	_FORCE_INLINE_ const bool& is_emit_signal() const { return _emit_signal; }
 	
 protected:
 	
@@ -67,22 +70,28 @@ protected:
 	
 private:
 	
+	std::mutex _lmutex;
 	std::thread _lthread;
 	UdpListeningReceiveSocket* _lsocket;
 	
 	int _port;
 	std::size_t _max_queue;
 	bool _autostart;
+	bool _emit_signal;
 	
 	bool _native_mode;
 	std::deque<gdOscMessage> _msg_queue;
-	std::deque<OSCmessage> _gd_queue;
 	
-	Ref<OSCmessage> _gd_signal_msg;
+	std::deque<OSCmessage>* _gd_queue_write;
+	std::deque<OSCmessage>* _gd_queue_read;
+	
 	Ref<OSCmessage> _gd_next_msg;
 	
+	void create_buffers();
+	void purge_buffers();
+	void swap_buffers();
+	void check_queue();	
 	
-	void check_queue();
 	
 };
 	
