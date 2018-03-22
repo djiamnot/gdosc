@@ -21,8 +21,10 @@ class gdOscMessage {
 
   void clear();
   void setAddress(const std::string &address);
+  void setTypetag(const std::string &typetag);
   std::string getAddress() const;
   std::string getRemoteIp() const;
+  std::string getTypetag() const;
   void setRemoteEndpoint(const std::string &host, int port);
   /// \return the remote host name/ip or "" if not set
 	std::string getRemoteHost() const;
@@ -37,7 +39,7 @@ class gdOscMessage {
   int32_t getArgAsInt32(int index, bool typeConvert = false) const;
   float getArgAsFloat(int index, bool typeConvert = false) const;
   std::string getArgAsString(int index, bool typeConvert = false) const;
-  int getNumArgs();
+  int getNumArgs() const;
 
   gdOscArgType getArgType(int index) const;
   std::string getArgTypeName(int index) const;
@@ -52,6 +54,8 @@ class gdOscMessage {
 
   std::string remoteHost; //< host name/ip the message was sent from
   int remotePort; //< port the message was sent from
+  
+  std::string typetag;
 
   std::vector<gdOscArg*> args;
 };
