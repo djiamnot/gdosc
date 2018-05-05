@@ -44,7 +44,7 @@ Then, in your sources directory `git clone --recurse-submodules https://github.c
 `scons platform=x11 use_llvm=yes`
 
 
-## Worlkflow
+## Workflow
 
 See [gdosc-demo](https://github.com/frankiezafe/gdosc-demo/commits/master) for an example on how to use these objects.
 
@@ -204,4 +204,17 @@ func _ready():
 	set_process(true)
 	get_node("OSCsender").parent = self
 	pass
+```
+## Contributing
+
+Contributions are welcome. The preferred way to contribute is via pull requests. In order to do so, fork this repository, make a new branch based on the *develop* branch (or rebase onto develop when you are about to send a pull request) and when your fix/feature is ready, do a pull request against the develop branch. Master is reserved for stable releases.
+
+## Coding style
+
+The c++ code in this repository uses the Google C++ Style Guide. `.clang-format` is included and you may find a configuration file for your editor [here](https://github.com/google/styleguide). It is also possible to use a  git hook that will fix any style problems in your contribution automatically. In order to use the git pre-commit hook do the following (on Linux):
+```
+sudo apt-get install clang-format
+
+#Then in .git folder:
+rm -rf hooks && ln -s ../.hooks hooks
 ```
