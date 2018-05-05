@@ -30,7 +30,7 @@ _valid(false) {
 			}
 		}
 		
-	} catch( osc::Exception& e ){
+	} catch ( osc::Exception& e ){
 		
 		// any parsing errors such as unexpected argument types, or
 		// missing arguments get thrown as exceptions.
