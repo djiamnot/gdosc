@@ -7,17 +7,15 @@ It uses oscpack as OSC protocol implementation so it potentially it works on all
 ### Godot engine
 First, you will need the Godot engine sources. Head over to [Godot compilation instructions](http://docs.godotengine.org/en/latest/development/compiling/) to get Godot building on your system (make sure it can build with `use_llvm=yes`).
 
-Then copy or link `gdosc` to `godot/modules` and recompile Godot with `scons platform=x11 use_llvm=yes`
+Then copy or link `gdosc` to `godot/modules` and recompile Godot with `scons platform=x11`
 
-### deps
+### Dependencies
 
 #### linux
 
 If you wants to use clang, install it with:
 
 `sudo apt install clang`
-
-If you are using gcc, just skip the *use_llvm=yes* and it will be ok.
 
 #### git
 
@@ -45,103 +43,8 @@ Then, in your sources directory `git clone --recurse-submodules https://github.c
 
 `scons platform=x11 use_llvm=yes`
 
-### Example
-Clone https://github.com/djiamnot/gdOscTest. See the README for information about the example.
 
-## Known issues
-At this time, gdosc supports only three data-types: _float_, _int_, and _string_. This is sufficient for me right now, but merge requests are welcome!
-
-Theoretically, this should work on any OS but it has been developed and tested on Linux with Godot3.0
-
-## Worlkflow (old school)
-
-First you need to instantiate OSCListener class. In my current workflow, I attach a script to root node in the scene. OSCListener emits a signal `osc_message` which you can pick up and do with what you want
-
-```python
-
-extends Spatial
-
-signal ready()
-signal osc_message()
-var osc_ready = false
-
-var osc_listener
-# This is how we instantiate the main receiver class. It will probably exist in your scene and
-# interested object will connect to its signal
-func _ready():
-    osc_listener  = OSCListener.new() # port 18002 by default
-    #  port can be changed:
-    # osc_listener.setPort(18004)
-
-    # osc_message is a signal emitted on every reception of OSC message
-    osc_liprobablementstener.connect("osc_message", self, "_on_osc_msg")
-    # there is also 'osc_ready' signal for your convenience, emited as soon as the OSC receiver is
-    # successfully instantiated
-
-# I like to forward the message (at this time, I am considering this my top-level node and scenes
-# will be instantiated below it)
-func _on_osc_msg(val):
-    emit_signal("osc_message", val)
-```
-
-So in the code above, pick it up and simply forward it so that scenes that I will instantiate under my root will subscribe to it. This is the kind of workflow that makes sense to me.
-
-Then, something we can subscribe from any other node:
-
-```python
-var osc
-
-func _ready():
-    set_process_input(true)
-    set_process(true)
-    # here we get the node where OSC communication is received.
-    # it emits a 'osc_message' signal
-    osc = get_parent_spatial()
-    osc.connect("osc_message", self, "_on_osc_message")
-
-func _on_osc_message(val):
-    print(get_name(), " ", val)
-    # test for my name
-    if val[0].right(1).match(get_name()):
-        print("matching name -- _on_osc_message")
-        if val[1] == "pos":
-            translate(Vector3(val[2], val[3], val[4]))
-```
-
-### Sending messages
-
-First of all, you need to add an **OSCtransmitter** node in your scene. It is located in the first level of the tree, between *HTTPRequest* and *ResourcePreloader*.
-
-![OSCtransmitter in creation menu](https://frankiezafe.org/images/7/7c/Godot_gdosc_OSCtransmitter.png)
-
-Once done, attach a script to it that looks like this:
-
-```python
-extends OSCtransmitter
-
-signal exit()
-
-func _ready():
-	set_process(true)
-	# initialisation of OSC sender, on port 25000 and with a buffer size of 1024
-	init("localhost", 25000, 1024)
-	framecount = 0
-	pass
-
-func _process(delta):
-	# creation of the new message
-	setAddress("/update")
-	# appending data
-	appendInt(framecount)
-	# sending the message to the client
-	sendMessage()
-	# cleanup of the message
-	reset()
-	framecount += 1
-	pass
-```
-
-## Worlkflow (new classes)
+## Workflow
 
 See [gdosc-demo](https://github.com/frankiezafe/gdosc-demo/commits/master) for an example on how to use these objects.
 
@@ -278,7 +181,7 @@ func _process(delta):
 	msg_address("/emitter/rot" )
 	msg_add_quat( Quat(parent.global_transform.basis) )
 	msg_send()
-	
+
 	msg_address("/emitter/pos" )
 	msg_add_v3( parent.global_transform.origin )
 	msg_send()
@@ -301,4 +204,17 @@ func _ready():
 	set_process(true)
 	get_node("OSCsender").parent = self
 	pass
+```
+## Contributing
+
+Contributions are welcome. The preferred way to contribute is via pull requests. In order to do so, fork this repository, make a new branch based on the *develop* branch (or rebase onto develop when you are about to send a pull request) and when your fix/feature is ready, do a pull request against the develop branch. Master is reserved for stable releases.
+
+## Coding style
+
+The c++ code in this repository uses the Google C++ Style Guide. `.clang-format` is included and you may find a configuration file for your editor [here](https://github.com/google/styleguide). It is also possible to use a  git hook that will fix any style problems in your contribution automatically. In order to use the git pre-commit hook do the following (on Linux):
+```
+sudo apt-get install clang-format
+
+#Then in .git folder:
+rm -rf hooks && ln -s ../.hooks hooks
 ```

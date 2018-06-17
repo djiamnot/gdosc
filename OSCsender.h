@@ -1,32 +1,27 @@
-#include "core/engine.h"
-#include "scene/main/node.h"
+#include <ip/UdpSocket.h>
 #include <cstdlib>
+#include <cstring>
+#include <deque>
 #include <iostream>
 #include <memory>
-#include <iostream>
-#include <cstring>
-#include <cstdlib>
-#include <deque>
-#include <thread>
 #include <mutex>
-#include <ip/UdpSocket.h>
-#include "osc/OscOutboundPacketStream.h"
+#include <thread>
+#include "core/engine.h"
 #include "gdOscMessage.h"
+#include "osc/OscOutboundPacketStream.h"
+#include "scene/main/node.h"
 
 #ifndef GDOSC_SENDER_H
 #define GDOSC_SENDER_H
 
-class OSCsender :
-public Node {
-
+class OSCsender : public Node {
   GDCLASS(OSCsender, Node);
 
-public:
-
+ public:
   OSCsender();
   ~OSCsender();
 
-  bool init( String ip, int port );
+  bool init(String ip, int port);
 
   bool start();
   void stop();
@@ -52,11 +47,11 @@ public:
   void msg_clear();
 
   // setters
-  void set_ip( String ip );
-  void set_port( int port );
-  void set_buffersize( int buffersize );
-  void set_autostart( bool autostart );
-  void set_autoclear( bool autoclear );
+  void set_ip(String ip);
+  void set_port(int port);
+  void set_buffersize(int buffersize);
+  void set_autostart(bool autostart);
+  void set_autoclear(bool autoclear);
 
   // getters
   _FORCE_INLINE_ const String& get_ip() const { return _ip; }
@@ -67,13 +62,11 @@ public:
   _FORCE_INLINE_ const bool& is_ready() const { return _ready; }
   _FORCE_INLINE_ const bool& is_started() const { return _started; }
 
-protected:
-
+ protected:
   void _notification(int p_what);
   static void _bind_methods();
 
-private:
-
+ private:
   String _ip;
   int _port;
   int _buffersize;
