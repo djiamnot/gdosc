@@ -23,8 +23,8 @@ OSCreceiver::~OSCreceiver() {
 void OSCreceiver::stop() {
 
 	if (_lsocket) {
-		delete _lsocket;
-		_lsocket = 0;
+      _lsocket = 0;
+      delete _lsocket;
 	}
 
 	purge_buffers();
@@ -83,6 +83,7 @@ bool OSCreceiver::init(int port) {
 	if ( port < 1 ) return false;
 	stop();
 	_port = port;
+  start();
 	return true;
 
 }
