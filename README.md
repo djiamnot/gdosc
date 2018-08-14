@@ -79,7 +79,7 @@ func _ready():
 
 #### using *signals*
 
-If **Emit signal** is enabled, at each [NOTIFICATION_PROCESS](http://docs.godotengine.org/en/3.0/getting_started/step_by_step/scripting_continued.html?highlight=NOTIFICATION_PROCESS), *OSCreceiver* will fire an **osc_message_received** signal.
+If **Emit signal** is enabled, at each [NOTIFICATION_PROCESS](http://docs.godotengine.org/en/3.0/getting_started/step_by_step/scripting_continued.html?highlight=NOTIFICATION_PROCESS), *OSCreceiver* will fire an **osc_message_received** signal. In order for *OSCreceiver* to receive notifications, you need to either add a `_process` method to the instance (even if it is empty) or call `set_process(true)` at an appropriate time, e.g. in the instance's `_ready` method.
 
 To broadcast signals, you have to connect it to *func* of other objects. Let say that your scene is structured as follows:
 
@@ -96,6 +96,7 @@ extends OSCreceiver
 func _ready():
 	connect( "osc_message_received", get_parent().get_node( "TextEdit"), "dump_osc" )
 	connect( "osc_message_received", get_parent().get_node( "MeshObject"), "parse_osc" )
+	set_process(true)
 	pass
 ```
 
