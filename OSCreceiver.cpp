@@ -201,7 +201,7 @@ void OSCreceiver::_notification(int p_what) {
       stop();
     } break;
     case NOTIFICATION_READY: {
-        if (_autostart !Engine::get_singleton()->is_editor_hint()) {
+      if (_autostart && !Engine::get_singleton()->is_editor_hint()) {
         std::cout << "OSCreceiver::_notification, starting reception" << std::endl;
         start();
       }
