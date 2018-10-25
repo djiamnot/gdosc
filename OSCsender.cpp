@@ -115,7 +115,7 @@ void OSCsender::msg_add_transform(const Transform& t) {
 void OSCsender::msg_send() {
   if (!_started) return;
 
-  char buffer[_buffersize];
+  char* buffer = new char[_buffersize];
   osc::OutboundPacketStream p(buffer, _buffersize);
 
   p << ::osc::BeginBundleImmediate;
@@ -137,6 +137,8 @@ void OSCsender::msg_send() {
   _socket->Send(p.Data(), p.Size());
 
   if (_autoclear) msg_clear();
+
+  delete[] buffer;
 }
 
 void OSCsender::msg_clear() { msg.clear(); }
