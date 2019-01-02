@@ -1,4 +1,9 @@
 # gdosc
+
+This module is now discontinued in favor of https://gitlab.com/frankiezafe/gdosc, which uses gdnative now.
+
+# old description
+
 This is a Godot game engine module for receiving and sending Open Sound Control messages [OSC](http://opensoundcontrol.org/introduction-osc).
 It uses oscpack as OSC protocol implementation so it potentially it works on all platforms that can handle oscpack. However it has been tested only on Linux (and, for the moment, I am not interested in any other platforms).
 
